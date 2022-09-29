@@ -29,7 +29,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         p3Cards = Array<Card>()
         p4Cards = Array<Card>()
         inPlayCards = Array<Card>()
-        handSize = 5;
+        handSize = 7;
         turn = 1;
         
         cards.append(Card(number: 0, color: Color.blue, id: 1))
@@ -116,6 +116,42 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         cards.append(Card(number: 8, color: Color.green, id: 79))
         cards.append(Card(number: 9, color: Color.green, id: 80))
         
+        cards.append(Card(number: 10, color: Color.red, id: 81))
+        cards.append(Card(number: 10, color: Color.blue, id: 82))
+        cards.append(Card(number: 10, color: Color.blue, id: 83))
+        cards.append(Card(number: 10, color: Color.green, id: 84))
+        cards.append(Card(number: 10, color: Color.green, id: 85))
+        cards.append(Card(number: 10, color: Color.yellow, id: 86))
+        cards.append(Card(number: 10, color: Color.yellow, id: 87))
+        cards.append(Card(number: 10, color: Color.red, id: 88))
+        
+        cards.append(Card(number: 11, color: Color.red, id: 90))
+        cards.append(Card(number: 11, color: Color.red, id: 91))
+        cards.append(Card(number: 11, color: Color.blue, id: 92))
+        cards.append(Card(number: 11, color: Color.blue, id: 93))
+        cards.append(Card(number: 11, color: Color.green, id: 94))
+        cards.append(Card(number: 11, color: Color.green, id: 95))
+        cards.append(Card(number: 11, color: Color.yellow, id: 96))
+        cards.append(Card(number: 11, color: Color.yellow, id: 97))
+        
+        cards.append(Card(number: 12, color: Color.red, id: 100))
+        cards.append(Card(number: 12, color: Color.red, id: 101))
+        cards.append(Card(number: 12, color: Color.blue, id: 102))
+        cards.append(Card(number: 12, color: Color.blue, id: 103))
+        cards.append(Card(number: 12, color: Color.green, id: 104))
+        cards.append(Card(number: 12, color: Color.green, id: 105))
+        cards.append(Card(number: 12, color: Color.yellow, id: 106))
+        cards.append(Card(number: 12, color: Color.yellow, id: 107))
+        
+        cards.append(Card(number: 13, color: Color.black, id: 110))
+        cards.append(Card(number: 13, color: Color.black, id: 111))
+        cards.append(Card(number: 13, color: Color.black, id: 112))
+        cards.append(Card(number: 13, color: Color.black, id: 113))
+        cards.append(Card(number: 13, color: Color.black, id: 114))
+        cards.append(Card(number: 14, color: Color.black, id: 115))
+        cards.append(Card(number: 14, color: Color.black, id: 116))
+        cards.append(Card(number: 14, color: Color.black, id: 117))
+        
         cards.shuffle()
         
         for _ in 1...handSize {
@@ -133,6 +169,10 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         var firstCard = cards.first!
         firstCard.isFaceUp.toggle()
         
+        if firstCard.color == Color.black {
+            firstCard.color = Color.red
+        }
+        
         cards.removeFirst(1)
         inPlayCards.append(firstCard)
         
@@ -142,27 +182,44 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     }
     
     mutating func playCard(card: Card, player: Int) {
+        var card = card
         if player == 1 {
             if let chosenIndex = p1Cards.firstIndex(matching: card) {
-                let playedCard = p1Cards.remove(at: chosenIndex)
+                var playedCard = p1Cards.remove(at: chosenIndex)
+                if playedCard.color == Color.black {
+                    playedCard.color = Color.red
+                    card.color = Color.red
+                }
                 inPlayCards.append(playedCard)
             }
         } else if  player == 2 {
             if let chosenIndex = p2Cards.firstIndex(matching: card) {
                 var playedCard = p2Cards.remove(at: chosenIndex)
                 playedCard.isFaceUp.toggle()
+                if playedCard.color == Color.black {
+                    playedCard.color = Color.red
+                    card.color = Color.red
+                }
                 inPlayCards.append(playedCard)
             }
         } else if player == 3 {
             if let chosenIndex = p3Cards.firstIndex(matching: card) {
                 var playedCard = p3Cards.remove(at: chosenIndex)
                 playedCard.isFaceUp.toggle()
+                if playedCard.color == Color.black {
+                    playedCard.color = Color.red
+                    card.color = Color.red
+                }
                 inPlayCards.append(playedCard)
             }
         } else {
             if let chosenIndex = p4Cards.firstIndex(matching: card) {
                 var playedCard = p4Cards.remove(at: chosenIndex)
                 playedCard.isFaceUp.toggle()
+                if playedCard.color == Color.black {
+                    playedCard.color = Color.red
+                    card.color = Color.red
+                }
                 inPlayCards.append(playedCard)
             }
         }
@@ -189,7 +246,6 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     
     struct Card: Identifiable {
         var isFaceUp = false
-        var isPlayable = false
         var number: Int
         var color: Color
         var id: Int

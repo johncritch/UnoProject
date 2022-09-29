@@ -54,6 +54,12 @@ struct GameView: View {
                             ForEach(unoGame.cards) {
                                 card in CardView(card: card)
                                     .rotationEffect(Angle(degrees: Double.random(in: -5...5)))
+                                    .onTapGesture {
+                                        unoGame.draw()
+                                        if unoGame.turn != 1 {
+                                            unoGame.compAI()
+                                        }
+                                    }
                             }
                         }
                         ZStack {
@@ -91,11 +97,10 @@ struct GameView: View {
                             index in CardView(card: unoGame.p1Cards[index])
                                 .rotationEffect(Angle(degrees: Double.random(in: -3...3)))
                                 .onTapGesture {
+                                    unoGame.whatTurn()
                                     if unoGame.playCard(card: unoGame.p1Cards[index], player: 1) {
-//                                        sleep(3)
                                         unoGame.compAI()
                                     }
-                                    unoGame.runGame()
                                 }
                                 .offset(x: 50 * CGFloat(index) + handOffset)
                         }
@@ -112,23 +117,16 @@ struct GameView: View {
                         .onTapGesture {
                             unoGame.newGame()
                         }
-                    RoundedRectangle(cornerRadius: 20)
-                        .frame(width: 80.0, height: 75.0)
-                        .foregroundColor(.red)
-                        .overlay(Text("Draw").font(.title).foregroundColor(.white))
-                        .onTapGesture {
-                            unoGame.draw()
-                            if unoGame.turn != 1 {
-                                unoGame.compAI()
-                            }
-                        }
-                    RoundedRectangle(cornerRadius: 20)
-                        .frame(width: 100.0, height: 75.0)
-                        .foregroundColor(.red)
-                        .overlay(Text("Start").font(.title).foregroundColor(.white))
-                        .onTapGesture {
-                            unoGame.runGame()
-                        }
+//                    RoundedRectangle(cornerRadius: 20)
+//                        .frame(width: 100.0, height: 75.0)
+//                        .foregroundColor(.red)
+//                        .overlay(Text("Draw").font(.title).foregroundColor(.white))
+//                        .onTapGesture {
+//                            unoGame.draw()
+//                            if unoGame.turn != 1 {
+//                                unoGame.compAI()
+//                            }
+//                        }
                 }.padding()
             }
         }.padding()
