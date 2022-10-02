@@ -15,15 +15,17 @@ struct GameView: View {
             Group {
                 HStack {
                     ZStack {
-                        let hand3Offset: CGFloat = 175 - (CGFloat(unoGame.p3Cards.count)*25)
-                        ForEach(0..<unoGame.p3Cards.count, id: \.self) {
-                            index in CardView(card: unoGame.p3Cards[index])
-                                .rotationEffect(Angle(degrees: Double.random(in: -3...3)))
+//                        let hand3Offset: CGFloat = 175 - (CGFloat(unoGame.p3Cards.count)*25)
+                        ForEach(0..<unoGame.p3Cards.count, id: \.self) { index in
+                            CardView(card: unoGame.p3Cards[index])
+                                .stacked(at: index, in: unoGame.p3Cards.count)
+                                .rotationEffect(Angle(degrees: unoGame.p3Cards[index].tilt))
+//                                .transition(AnyTransition.asymmetric(insertion: .offset(y: 100), removal: .offset(y: 100)))
                                 .onTapGesture {
 //                                    unoGame.playCard(card: unoGame.p3Cards[index], player: 3)
 //                                    unoGame.runGame()
                                 }
-                                .offset(x: (50 * CGFloat(index)) + hand3Offset)
+//                                .offset(x: (50 * CGFloat(index)) + hand3Offset)
                         }
                     }
                     Spacer()
@@ -36,7 +38,8 @@ struct GameView: View {
                             let hand4Offset: CGFloat = 175 - (CGFloat(unoGame.p4Cards.count)*25)
                             ForEach(0..<unoGame.p4Cards.count, id: \.self) {
                                 index in CardView(card: unoGame.p4Cards[index])
-                                    .rotationEffect(Angle(degrees: Double.random(in: -3...3) + 90))
+                                    .rotationEffect(Angle(degrees: unoGame.p4Cards[index].tilt + 90))
+//                                    .transition(AnyTransition.offset(x: 50, y: 50))
                                     .onTapGesture {
 //                                        unoGame.playCard(card: unoGame.p4Cards[index], player: 4)
 //                                        unoGame.runGame()
@@ -53,7 +56,8 @@ struct GameView: View {
                         ZStack {
                             ForEach(unoGame.cards) {
                                 card in CardView(card: card)
-                                    .rotationEffect(Angle(degrees: Double.random(in: -5...5)))
+                                    .rotationEffect(Angle(degrees: card.tilt))
+//                                    .transition(AnyTransition.offset(x: 50, y: 50))
                                     .onTapGesture {
                                         unoGame.draw()
                                         if unoGame.turn != 1 {
@@ -65,7 +69,7 @@ struct GameView: View {
                         ZStack {
                             ForEach(unoGame.inPlayCards) {
                                 card in CardView(card: card)
-                                    .rotationEffect(Angle(degrees: Double.random(in: -5...5)))
+                                    .rotationEffect(Angle(degrees: card.tilt))
                             }
                         }
                     }
@@ -77,7 +81,8 @@ struct GameView: View {
                             let hand2Offset: CGFloat = 175 - (CGFloat(unoGame.p2Cards.count)*25)
                             ForEach(0..<unoGame.p2Cards.count, id: \.self) {
                                 index in CardView(card: unoGame.p2Cards[index])
-                                    .rotationEffect(Angle(degrees: Double.random(in: -3...3) + 90))
+                                    .rotationEffect(Angle(degrees: unoGame.p2Cards[index].tilt + 90))
+//                                    .transition(AnyTransition.offset(x: 50, y: 50))
                                     .onTapGesture {
 //                                        unoGame.playCard(card: unoGame.p2Cards[index], player: 2)
 //                                        unoGame.runGame()
@@ -95,7 +100,8 @@ struct GameView: View {
                         let handOffset: CGFloat = 175 - (CGFloat(unoGame.p1Cards.count)*25)
                         ForEach(0..<unoGame.p1Cards.count, id: \.self) {
                             index in CardView(card: unoGame.p1Cards[index])
-                                .rotationEffect(Angle(degrees: Double.random(in: -3...3)))
+                                .rotationEffect(Angle(degrees: unoGame.p1Cards[index].tilt))
+//                                .transition(AnyTransition.offset(x: 50, y: 50))
                                 .onTapGesture {
                                     unoGame.whatTurn()
                                     if unoGame.playCard(card: unoGame.p1Cards[index], player: 1) {
@@ -116,6 +122,7 @@ struct GameView: View {
                         .overlay(Text("New Game").font(.title).foregroundColor(.white))
                         .onTapGesture {
                             unoGame.newGame()
+                            unoGame.dealCards()
                         }
 //                    RoundedRectangle(cornerRadius: 20)
 //                        .frame(width: 100.0, height: 75.0)
@@ -129,7 +136,11 @@ struct GameView: View {
 //                        }
                 }.padding()
             }
-        }.padding()
+//            .onAppear {
+//                unoGame.dealCards()
+//            }
+        }
+        .padding()
     }
     // MARK: - Helpers
     
@@ -141,6 +152,13 @@ struct GameView: View {
     
     private struct Card {
         static let desiredWidth: CGFloat = 50
+    }
+}
+
+extension View {
+    func stacked(at position: Int, in total: Int) -> some View {
+        let offset = Double(total - position)
+        return self.offset(x: CGFloat(position) * 40)
     }
 }
 

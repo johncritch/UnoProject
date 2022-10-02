@@ -18,6 +18,7 @@ struct CardView: View {
                 }
                 else if card.isFaceUp {
                     if card.number < 10 {
+                        RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.black, lineWidth: 4)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).fill(card.color)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.white, lineWidth: 3)
                         Ellipse().fill(.white).frame( width: 70, height: 50)
@@ -38,6 +39,7 @@ struct CardView: View {
                             .position(x:15,y:15)
                             .rotationEffect(Angle(degrees: 180))
                     } else if card.number == 10 {
+                        RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.black, lineWidth: 4)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).fill(card.color)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.white, lineWidth: 3)
                         Ellipse().fill(.white).frame( width: 70, height: 50)
@@ -58,6 +60,7 @@ struct CardView: View {
                             .position(x:15,y:15)
                             .rotationEffect(Angle(degrees: 180))
                     } else if card.number == 11 {
+                        RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.black, lineWidth: 4)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).fill(card.color)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.white, lineWidth: 3)
                         Ellipse().fill(.white).frame( width: 70, height: 50)
@@ -78,6 +81,7 @@ struct CardView: View {
                             .position(x:15,y:15)
                             .rotationEffect(Angle(degrees: 180))
                     } else if card.number == 12 {
+                        RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.black, lineWidth: 4)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).fill(card.color)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.white, lineWidth: 3)
                         Ellipse().fill(.white).frame( width: 70, height: 50)
@@ -98,6 +102,7 @@ struct CardView: View {
                             .position(x:15,y:15)
                             .rotationEffect(Angle(degrees: 180))
                     } else if card.number == 13{
+                        RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.black, lineWidth: 4)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).fill(card.color)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.white, lineWidth: 3)
                         Ellipse().fill(.white).frame( width: 70, height: 50)
@@ -140,6 +145,7 @@ struct CardView: View {
                             .position(x:15,y:15)
                             .rotationEffect(Angle(degrees: 180))
                     } else {
+                        RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.black, lineWidth: 4)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).fill(card.color)
                         RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.white, lineWidth: 3)
                         Ellipse().fill(.white).frame( width: 70, height: 50)
@@ -194,6 +200,7 @@ struct CardView: View {
                             .rotationEffect(Angle(degrees: 180))
                     }
                 } else {
+                    RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.black, lineWidth: 4)
                     RoundedRectangle(cornerRadius: Card.cornerRadius)
                     RoundedRectangle(cornerRadius: Card.cornerRadius).stroke(.white, lineWidth: 3)
                     Ellipse().fill(.red).frame( width: 70, height: 50)

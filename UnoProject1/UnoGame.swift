@@ -244,7 +244,33 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         }
     }
     
+    mutating func deal(cardIndex: Int, player: Int) {
+        if player == 1 {
+            if cardIndex >= 0 && cardIndex < p1Cards.count {
+                p1Cards[cardIndex].isDealt = true
+            }
+        }
+        if player == 2 {
+            if cardIndex >= 0 && cardIndex < p2Cards.count {
+                p2Cards[cardIndex].isDealt = true
+            }
+        }
+        if player == 3 {
+            if cardIndex >= 0 && cardIndex < p3Cards.count {
+                p3Cards[cardIndex].isDealt = true
+            }
+        }
+        if player == 4 {
+            if cardIndex >= 0 && cardIndex < p4Cards.count {
+                p4Cards[cardIndex].isDealt = true
+            }
+        }
+    }
+    
     struct Card: Identifiable {
+        fileprivate(set) var isDealt = false
+        var tilt = Double.random(in: -3...3)
+        var player = 0
         var isFaceUp = false
         var number: Int
         var color: Color

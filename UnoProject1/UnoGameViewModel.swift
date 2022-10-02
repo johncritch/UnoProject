@@ -24,6 +24,10 @@ class UnoGameViewModel: ObservableObject {
         game.topCardColor
     }
     
+//    var cards: Array<UnoGame<String>.Card> {
+//        game.cards
+//    }
+    
     var cards: Array<UnoGame<String>.Card> {
         game.cards
     }
@@ -34,18 +38,22 @@ class UnoGameViewModel: ObservableObject {
     
     var p1Cards: Array<UnoGame<String>.Card> {
         game.p1Cards
+//            .filter { $0.isDealt }
     }
     
     var p2Cards: Array<UnoGame<String>.Card> {
         game.p2Cards
+//            .filter { $0.isDealt }
     }
     
     var p3Cards: Array<UnoGame<String>.Card> {
         game.p3Cards
+//            .filter { $0.isDealt }
     }
     
     var p4Cards: Array<UnoGame<String>.Card> {
         game.p4Cards
+//            .filter { $0.isDealt }
     }
 
     var turn = 1
@@ -98,6 +106,60 @@ class UnoGameViewModel: ObservableObject {
     func newGame() {
         turn = 1
         game = UnoGameViewModel.createGame()
+    }
+    
+    func dealCards() {
+        dealPlayer1()
+        dealPlayer2()
+        dealPlayer3()
+        dealPlayer4()
+//        for index in 0..<game.cards.count {
+//            withAnimation (
+//                Animation.easeInOut(duration: 0.3).delay(Double(index) * 0.25)
+//            ) {
+//                game.deal(cardIndex: index)
+//            }
+//        }
+    }
+    
+    func dealPlayer1() {
+        for index in 0..<game.p1Cards.count {
+            withAnimation (
+                Animation.easeInOut(duration: 0.3).delay(Double(index) * 0.25)
+            ) {
+                game.deal(cardIndex: index, player: 1)
+            }
+        }
+    }
+    
+    func dealPlayer2() {
+        for index in 0..<game.p2Cards.count {
+            withAnimation (
+                Animation.easeInOut(duration: 0.3).delay(Double(index) * 0.25)
+            ) {
+                game.deal(cardIndex: index, player: 2)
+            }
+        }
+    }
+    
+    func dealPlayer3() {
+        for index in 0..<game.p3Cards.count {
+            withAnimation (
+                Animation.easeInOut(duration: 0.3).delay(Double(index) * 0.25)
+            ) {
+                game.deal(cardIndex: index, player: 3)
+            }
+        }
+    }
+    
+    func dealPlayer4() {
+        for index in 0..<game.p4Cards.count {
+            withAnimation (
+                Animation.easeInOut(duration: 0.3).delay(Double(index) * 0.25)
+            ) {
+                game.deal(cardIndex: index, player: 4)
+            }
+        }
     }
     
     func draw() {
