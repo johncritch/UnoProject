@@ -61,9 +61,9 @@
 		6275D24B28D3AD5B00BA07E2 /* UnoProject1 */ = {
 			isa = PBXGroup;
 			children = (
-				6275D25A28D3AD7C00BA07E2 /* Model */,
 				6275D25C28D3AD9300BA07E2 /* View */,
 				6275D25B28D3AD8700BA07E2 /* ViewModel */,
+				6275D25A28D3AD7C00BA07E2 /* Model */,
 				6275D26528D3B6A800BA07E2 /* Utilities */,
 				6275D25028D3AD5C00BA07E2 /* Assets.xcassets */,
 				6275D25228D3AD5C00BA07E2 /* Preview Content */,

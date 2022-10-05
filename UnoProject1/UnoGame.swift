@@ -11,24 +11,27 @@ import SwiftUI
 
 struct UnoGame<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
-    private(set) var p1Cards: Array<Card>
-    private(set) var p2Cards: Array<Card>
-    private(set) var p3Cards: Array<Card>
-    private(set) var p4Cards: Array<Card>
+    private(set) var players: Array<Player>
     private(set) var inPlayCards: Array<Card>
     var handSize: Int
     var newGame: Bool = false
     var turn: Int
+    var firstCard: Card
     var topCardNumber: Int
     var topCardColor: Color
     
     init() {
         cards = Array<Card>()
-        p1Cards = Array<Card>()
-        p2Cards = Array<Card>()
-        p3Cards = Array<Card>()
-        p4Cards = Array<Card>()
+        
+        players = [
+            Player(id: 1),
+            Player(id: 2),
+            Player(id: 3),
+            Player(id: 4)
+        ]
+        
         inPlayCards = Array<Card>()
+        
         handSize = 7;
         turn = 1;
         
@@ -155,20 +158,31 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         cards.shuffle()
         
         for _ in 1...handSize {
-            var playerOneCard = cards.first!
-            playerOneCard.isFaceUp = true
-            p1Cards.append(playerOneCard)
+            var playerCard = cards.first!
+            playerCard.isFaceUp = true
+            playerCard.isDealt = false
+            players[0].cards.append(playerCard)
             cards.removeFirst(1)
-            p2Cards.append(cards.first!)
+            
+            playerCard = cards.first!
+            playerCard.isDealt = false
+            players[1].cards.append(playerCard)
             cards.removeFirst(1)
-            p3Cards.append(cards.first!)
+            
+            playerCard = cards.first!
+            playerCard.isDealt = false
+            players[2].cards.append(playerCard)
             cards.removeFirst(1)
-            p4Cards.append(cards.first!)
+            
+            playerCard = cards.first!
+            playerCard.isDealt = false
+            players[3].cards.append(playerCard)
             cards.removeFirst(1)
         }
-        var firstCard = cards.first!
-        firstCard.isFaceUp.toggle()
         
+        firstCard = cards.first!
+        firstCard.isFaceUp.toggle()
+
         if firstCard.color == Color.black {
             firstCard.color = Color.red
         }
@@ -181,94 +195,112 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         topCardColor = inPlayCards[0].color
     }
     
-    mutating func playCard(card: Card, player: Int) {
-        var card = card
-        if player == 1 {
-            if let chosenIndex = p1Cards.firstIndex(matching: card) {
-                var playedCard = p1Cards.remove(at: chosenIndex)
+    mutating func playCard(card: Card, player: Player) {
+        if let chosenPlayerIndex = players.firstIndex(matching: player) {
+            if let chosenCardIndex = players[chosenPlayerIndex].cards.firstIndex(matching: card) {
+                var playedCard = players[chosenPlayerIndex].cards.remove(at: chosenCardIndex)
+                playedCard.isFaceUp = true
                 if playedCard.color == Color.black {
                     playedCard.color = Color.red
-                    card.color = Color.red
                 }
                 inPlayCards.append(playedCard)
-            }
-        } else if  player == 2 {
-            if let chosenIndex = p2Cards.firstIndex(matching: card) {
-                var playedCard = p2Cards.remove(at: chosenIndex)
-                playedCard.isFaceUp.toggle()
-                if playedCard.color == Color.black {
-                    playedCard.color = Color.red
-                    card.color = Color.red
-                }
-                inPlayCards.append(playedCard)
-            }
-        } else if player == 3 {
-            if let chosenIndex = p3Cards.firstIndex(matching: card) {
-                var playedCard = p3Cards.remove(at: chosenIndex)
-                playedCard.isFaceUp.toggle()
-                if playedCard.color == Color.black {
-                    playedCard.color = Color.red
-                    card.color = Color.red
-                }
-                inPlayCards.append(playedCard)
-            }
-        } else {
-            if let chosenIndex = p4Cards.firstIndex(matching: card) {
-                var playedCard = p4Cards.remove(at: chosenIndex)
-                playedCard.isFaceUp.toggle()
-                if playedCard.color == Color.black {
-                    playedCard.color = Color.red
-                    card.color = Color.red
-                }
-                inPlayCards.append(playedCard)
-            }
-        }
-        topCardNumber = card.number
-        topCardColor = card.color
-    }
-    
-    mutating func drawCard(player: Int) {
-        if var topCard = cards.last {
-            cards.removeLast(1)
-            
-            if player == 1 {
-                topCard.isFaceUp.toggle()
-                p1Cards.append(topCard)
-            } else if player == 2 {
-                p2Cards.append(topCard)
-            } else if player == 3 {
-                p3Cards.append(topCard)
-            } else {
-                p4Cards.append(topCard)
             }
         }
     }
+//                var playedCard = p1Cards.remove(at: chosenIndex)
+//                if playedCard.color == Color.black {
+//                    playedCard.color = Color.red
+//                    card.color = Color.red
+//                }
+//                inPlayCards.append(playedCard)
+//            }
+//        } else if  player == 2 {
+//            if let chosenIndex = p2Cards.firstIndex(matching: card) {
+//                var playedCard = p2Cards.remove(at: chosenIndex)
+//                playedCard.isFaceUp.toggle()
+//                if playedCard.color == Color.black {
+//                    playedCard.color = Color.red
+//                    card.color = Color.red
+//                }
+//                inPlayCards.append(playedCard)
+//            }
+//        } else if player == 3 {
+//            if let chosenIndex = p3Cards.firstIndex(matching: card) {
+//                var playedCard = p3Cards.remove(at: chosenIndex)
+//                playedCard.isFaceUp.toggle()
+//                if playedCard.color == Color.black {
+//                    playedCard.color = Color.red
+//                    card.color = Color.red
+//                }
+//                inPlayCards.append(playedCard)
+//            }
+//        } else {
+//            if let chosenIndex = p4Cards.firstIndex(matching: card) {
+//                var playedCard = p4Cards.remove(at: chosenIndex)
+//                playedCard.isFaceUp.toggle()
+//                if playedCard.color == Color.black {
+//                    playedCard.color = Color.red
+//                    card.color = Color.red
+//                }
+//                inPlayCards.append(playedCard)
+//            }
+//        }
+//        topCardNumber = card.number
+//        topCardColor = card.color
+//    }
     
-    mutating func deal(cardIndex: Int, player: Int) {
-        if player == 1 {
-            if cardIndex >= 0 && cardIndex < p1Cards.count {
-                p1Cards[cardIndex].isDealt = true
+    mutating func drawCard(card: Card, player: Player) {
+        if let chosenPlayerIndex = players.firstIndex(matching: player) {
+            if let chosenIndex = cards.firstIndex(matching: card) {
+                var drawnCard = cards.remove(at: chosenIndex)
+                if player.id == 1 {
+                    drawnCard.isFaceUp = true
+                }
+                players[chosenPlayerIndex].cards.append(drawnCard)
             }
         }
-        if player == 2 {
-            if cardIndex >= 0 && cardIndex < p2Cards.count {
-                p2Cards[cardIndex].isDealt = true
-            }
+    }
+//        if var topCard = cards.last! {
+//            if let chosenIndex = cards.firstIndex(matching: cards.l) {
+//                cards[chosenIndex].player = 5
+//            cards.removeLast(1)
+//
+//            if player == 1 {
+//                topCard.isFaceUp.toggle()
+//                p1Cards.append(topCard)
+//            } else if player == 2 {
+//                p2Cards.append(topCard)
+//            } else if player == 3 {
+//                p3Cards.append(topCard)
+//            } else {
+//                p4Cards.append(topCard)
+//            }
+//        }
+//    }
+
+    
+    mutating func deal(cardIndex: Int) {
+        if cardIndex >= 0 && cardIndex < handSize {
+            players[0].cards[cardIndex].isDealt = true
         }
-        if player == 3 {
-            if cardIndex >= 0 && cardIndex < p3Cards.count {
-                p3Cards[cardIndex].isDealt = true
-            }
+        if cardIndex >= handSize && cardIndex < handSize * 2 {
+            players[1].cards[cardIndex - handSize].isDealt = true
         }
-        if player == 4 {
-            if cardIndex >= 0 && cardIndex < p4Cards.count {
-                p4Cards[cardIndex].isDealt = true
-            }
+        if cardIndex >= handSize * 2 && cardIndex < handSize * 3 {
+            players[2].cards[cardIndex - (handSize * 2)].isDealt = true
         }
+        if cardIndex >= handSize * 3 && cardIndex < handSize * 4 {
+            players[3].cards[cardIndex - (handSize * 3)].isDealt = true
+        }
+    }
+    
+    struct Player: Identifiable {
+        var cards = Array<Card>()
+        var id: Int
     }
     
     struct Card: Identifiable {
-        fileprivate(set) var isDealt = false
+        fileprivate(set) var isDealt = true
         var tilt = Double.random(in: -3...3)
         var player = 0
         var isFaceUp = false
@@ -277,3 +309,4 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         var id: Int
     }
 }
+

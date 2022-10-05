@@ -15,6 +15,8 @@ struct CardView: View {
             ZStack {
                 if card.id == 0 {
                     RoundedRectangle(cornerRadius: Card.cornerRadius).fill(.white)
+                } else if card.isDealt == false {
+                    RoundedRectangle(cornerRadius: Card.cornerRadius).opacity(0)
                 }
                 else if card.isFaceUp {
                     if card.number < 10 {
@@ -209,17 +211,17 @@ struct CardView: View {
                         .font(.title)
                         .foregroundColor(.black)
                         .bold()
-//                    Text(String(card.number))
-//                        .font(.title)
-//                        .foregroundColor(card.color)
-//                        .bold()
-//                        .position(x:15,y:15)
-//                    Text(String(card.number))
-//                        .font(.title)
-//                        .foregroundColor(card.color)
-//                        .bold()
-//                        .position(x:15,y:15)
-//                        .rotationEffect(Angle(degrees: 180))
+                    Text(String(card.number))
+                        .font(.title)
+                        .foregroundColor(card.color)
+                        .bold()
+                        .position(x:15,y:15)
+                    Text(String(card.number))
+                        .font(.title)
+                        .foregroundColor(card.color)
+                        .bold()
+                        .position(x:15,y:15)
+                        .rotationEffect(Angle(degrees: 180))
                 }
             }
             .foregroundColor(.black)

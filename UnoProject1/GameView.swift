@@ -11,21 +11,66 @@ struct GameView: View {
     @ObservedObject var unoGame: UnoGameViewModel
     
     var body: some View {
+//        VStack {
+//            HStack {
+//                ZStack {
+//                    ForEach(0..<unoGame.cards.count, id: \.self) { index in
+//                        CardView(card: unoGame.cards[index])
+//                            .rotationEffect(Angle(degrees: unoGame.cards[index].tilt))
+//                            .onTapGesture {
+//                                unoGame.draw(player: unoGame.players[0])
+//                            }
+//                    }
+//                }
+//                .scaleEffect(0.75)
+//
+//                ZStack {
+//                    ForEach(0..<unoGame.inPlayCards.count, id: \.self) { index in
+//                        CardView(card: unoGame.inPlayCards[index])
+//                            .rotationEffect(Angle(degrees: unoGame.inPlayCards[index].tilt))
+//
+//                    }
+//                }
+//                .scaleEffect(0.75)
+//            }
+//            ForEach (unoGame.players) { player in
+//                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: -50, alignment: .center)]) {
+//                    ForEach(0..<player.cards.count, id: \.self) { index in
+//                        CardView(card: player.cards[index])
+//                            .transition(AnyTransition.offset(x: -20, y: -100))
+//                            .rotationEffect(Angle(degrees: player.cards[index].tilt))
+//                            .onTapGesture {
+//                                unoGame.whatTurn()
+//                                if unoGame.playCard(card: player.cards[index], player: player) {
+//                                    unoGame.compAI()
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                .frame(width: 400)
+//                .scaleEffect(0.75)
+//            }
+//        .onAppear {
+//            unoGame.dealCards()
+//        }
+//    }
+    
         VStack {
             Group {
                 HStack {
                     ZStack {
-//                        let hand3Offset: CGFloat = 175 - (CGFloat(unoGame.p3Cards.count)*25)
-                        ForEach(0..<unoGame.p3Cards.count, id: \.self) { index in
-                            CardView(card: unoGame.p3Cards[index])
-                                .stacked(at: index, in: unoGame.p3Cards.count)
-                                .rotationEffect(Angle(degrees: unoGame.p3Cards[index].tilt))
+                        let hand3Offset: CGFloat = 175 - (CGFloat(unoGame.players[2].cards.count)*25)
+                        ForEach(0..<unoGame.players[2].cards.count, id: \.self) { index in
+                            CardView(card: unoGame.players[2].cards[index])
+//                                .stacked(at: index, in: unoGame.p3Cards.count)
+                                .rotationEffect(Angle(degrees: unoGame.players[2].cards[index].tilt))
 //                                .transition(AnyTransition.asymmetric(insertion: .offset(y: 100), removal: .offset(y: 100)))
                                 .onTapGesture {
-//                                    unoGame.playCard(card: unoGame.p3Cards[index], player: 3)
-//                                    unoGame.runGame()
+                                    unoGame.whatTurn()
+//                                    unoGame.playCard(card: unoGame.players[3].cards[index], player: 3)
                                 }
-//                                .offset(x: (50 * CGFloat(index)) + hand3Offset)
+                                .offset(x: (50 * CGFloat(index)) + hand3Offset)
                         }
                     }
                     Spacer()
@@ -35,14 +80,14 @@ struct GameView: View {
                 Group {
                     VStack {
                         ZStack {
-                            let hand4Offset: CGFloat = 175 - (CGFloat(unoGame.p4Cards.count)*25)
-                            ForEach(0..<unoGame.p4Cards.count, id: \.self) {
-                                index in CardView(card: unoGame.p4Cards[index])
-                                    .rotationEffect(Angle(degrees: unoGame.p4Cards[index].tilt + 90))
+                            let hand4Offset: CGFloat = 175 - (CGFloat(unoGame.players[3].cards.count)*25)
+                            ForEach(0..<unoGame.players[3].cards.count, id: \.self) {
+                                index in CardView(card: unoGame.players[3].cards[index])
+                                    .rotationEffect(Angle(degrees: unoGame.players[3].cards[index].tilt + 90))
 //                                    .transition(AnyTransition.offset(x: 50, y: 50))
                                     .onTapGesture {
-//                                        unoGame.playCard(card: unoGame.p4Cards[index], player: 4)
-//                                        unoGame.runGame()
+                                        unoGame.whatTurn()
+//                                        unoGame.playCard(card: unoGame.players[4].cards[index], player: 4)
                                     }
                                     .offset(x:10, y:(50 * CGFloat(index)) + hand4Offset)
                             }
@@ -59,9 +104,9 @@ struct GameView: View {
                                     .rotationEffect(Angle(degrees: card.tilt))
 //                                    .transition(AnyTransition.offset(x: 50, y: 50))
                                     .onTapGesture {
-                                        unoGame.draw()
+                                        unoGame.draw(player: unoGame.players[0])
                                         if unoGame.turn != 1 {
-                                            unoGame.compAI()
+//                                            unoGame.compAI()
                                         }
                                     }
                             }
@@ -78,14 +123,14 @@ struct GameView: View {
                 Group {
                     VStack {
                         ZStack {
-                            let hand2Offset: CGFloat = 175 - (CGFloat(unoGame.p2Cards.count)*25)
-                            ForEach(0..<unoGame.p2Cards.count, id: \.self) {
-                                index in CardView(card: unoGame.p2Cards[index])
-                                    .rotationEffect(Angle(degrees: unoGame.p2Cards[index].tilt + 90))
+                            let hand2Offset: CGFloat = 175 - (CGFloat(unoGame.players[1].cards.count)*25)
+                            ForEach(0..<unoGame.players[1].cards.count, id: \.self) {
+                                index in CardView(card: unoGame.players[1].cards[index])
+                                    .rotationEffect(Angle(degrees: unoGame.players[1].cards[index].tilt + 90))
 //                                    .transition(AnyTransition.offset(x: 50, y: 50))
                                     .onTapGesture {
-//                                        unoGame.playCard(card: unoGame.p2Cards[index], player: 2)
-//                                        unoGame.runGame()
+                                        unoGame.whatTurn()
+//                                        unoGame.playCard(card: unoGame.players[2].cards[index], player: players[1])
                                     }
                                     .offset(x:-10, y:(50 * CGFloat(index)) + hand2Offset)
                             }
@@ -97,14 +142,14 @@ struct GameView: View {
             Group {
                 HStack {
                     ZStack {
-                        let handOffset: CGFloat = 175 - (CGFloat(unoGame.p1Cards.count)*25)
-                        ForEach(0..<unoGame.p1Cards.count, id: \.self) {
-                            index in CardView(card: unoGame.p1Cards[index])
-                                .rotationEffect(Angle(degrees: unoGame.p1Cards[index].tilt))
+                        let handOffset: CGFloat = 175 - (CGFloat(unoGame.players[0].cards.count)*25)
+                        ForEach(0..<unoGame.players[0].cards.count, id: \.self) {
+                            index in CardView(card: unoGame.players[0].cards[index])
+                                .rotationEffect(Angle(degrees: unoGame.players[0].cards[index].tilt))
 //                                .transition(AnyTransition.offset(x: 50, y: 50))
                                 .onTapGesture {
                                     unoGame.whatTurn()
-                                    if unoGame.playCard(card: unoGame.p1Cards[index], player: 1) {
+                                    if unoGame.playCard(card: unoGame.players[0].cards[index], player: unoGame.players[0]) {
                                         unoGame.compAI()
                                     }
                                 }
@@ -136,17 +181,16 @@ struct GameView: View {
 //                        }
                 }.padding()
             }
-//            .onAppear {
-//                unoGame.dealCards()
-//            }
+            .onAppear {
+                unoGame.dealCards()
+            }
         }
         .padding()
     }
     // MARK: - Helpers
-    
-    private func columns(for size: CGSize) -> [GridItem] {
-        Array(repeating: GridItem(.flexible()), count: Int(size.width / Card.desiredWidth))
-    }
+//    private func columns(for size: CGSize) -> [GridItem] {
+//        Array(repeating: GridItem(.flexible()), count: Int(size.width / Card.desiredWidth))
+//    }
     
     // MARK: - Card
     
@@ -154,13 +198,13 @@ struct GameView: View {
         static let desiredWidth: CGFloat = 50
     }
 }
-
-extension View {
-    func stacked(at position: Int, in total: Int) -> some View {
-        let offset = Double(total - position)
-        return self.offset(x: CGFloat(position) * 40)
-    }
-}
+//
+//extension View {
+//    func stacked(at position: Int, in total: Int) -> some View {
+//        let offset = Double(total - position)
+//        return self.offset(x: CGFloat(position) * 40)
+//    }
+//}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
