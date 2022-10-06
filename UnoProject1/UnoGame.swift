@@ -19,6 +19,8 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     var firstCard: Card
     var topCardNumber: Int
     var topCardColor: Color
+    var displayMessage: String
+    var colors = [Color.red, Color.blue, Color.yellow, Color.green]
     
     init() {
         cards = Array<Card>()
@@ -193,17 +195,24 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         
         topCardNumber = inPlayCards[0].number
         topCardColor = inPlayCards[0].color
+        
+        displayMessage = ""
     }
     
-    mutating func playCard(card: Card, player: Player) {
+    mutating func playCard(card: Card, player: Player, desiredColor: Color = Color.red, message: String = "") {
         if let chosenPlayerIndex = players.firstIndex(matching: player) {
             if let chosenCardIndex = players[chosenPlayerIndex].cards.firstIndex(matching: card) {
                 var playedCard = players[chosenPlayerIndex].cards.remove(at: chosenCardIndex)
                 playedCard.isFaceUp = true
                 if playedCard.color == Color.black {
-                    playedCard.color = Color.red
+                    if player.id != 1 {
+                        playedCard.color = colors.randomElement()!
+                    } else {
+                        playedCard.color = desiredColor
+                    }
                 }
                 inPlayCards.append(playedCard)
+                displayMessage = message
             }
         }
     }
@@ -249,7 +258,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
 //        topCardColor = card.color
 //    }
     
-    mutating func drawCard(card: Card, player: Player) {
+    mutating func drawCard(card: Card, player: Player, message: String = "") {
         if let chosenPlayerIndex = players.firstIndex(matching: player) {
             if let chosenIndex = cards.firstIndex(matching: card) {
                 var drawnCard = cards.remove(at: chosenIndex)
@@ -257,6 +266,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
                     drawnCard.isFaceUp = true
                 }
                 players[chosenPlayerIndex].cards.append(drawnCard)
+                displayMessage = message
             }
         }
     }

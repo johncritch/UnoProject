@@ -9,6 +9,8 @@ import SwiftUI
 
 struct GameView: View {
     @ObservedObject var unoGame: UnoGameViewModel
+    @State var chosenColor = Color.black
+    @State var won = false
     
     var body: some View {
 //        VStack {
@@ -97,24 +99,27 @@ struct GameView: View {
                 }
                 Spacer()
                 Group {
-                    HStack {
-                        ZStack {
-                            ForEach(unoGame.cards) {
-                                card in CardView(card: card)
-                                    .rotationEffect(Angle(degrees: card.tilt))
-//                                    .transition(AnyTransition.offset(x: 50, y: 50))
-                                    .onTapGesture {
-                                        unoGame.draw(player: unoGame.players[0])
-                                        if unoGame.turn != 1 {
-//                                            unoGame.compAI()
+                    VStack {
+                        Text(unoGame.displayMessage)
+                        HStack {
+                            ZStack {
+                                ForEach(unoGame.cards) {
+                                    card in CardView(card: card)
+                                        .rotationEffect(Angle(degrees: card.tilt))
+                                    //                                    .transition(AnyTransition.offset(x: 50, y: 50))
+                                        .onTapGesture {
+                                            unoGame.draw(player: unoGame.players[0])
+                                            if unoGame.turn != 1 {
+                                                //                                            unoGame.compAI()
+                                            }
                                         }
-                                    }
+                                }
                             }
-                        }
-                        ZStack {
-                            ForEach(unoGame.inPlayCards) {
-                                card in CardView(card: card)
-                                    .rotationEffect(Angle(degrees: card.tilt))
+                            ZStack {
+                                ForEach(unoGame.inPlayCards) {
+                                    card in CardView(card: card)
+                                        .rotationEffect(Angle(degrees: card.tilt))
+                                }
                             }
                         }
                     }
@@ -148,8 +153,10 @@ struct GameView: View {
                                 .rotationEffect(Angle(degrees: unoGame.players[0].cards[index].tilt))
 //                                .transition(AnyTransition.offset(x: 50, y: 50))
                                 .onTapGesture {
-                                    unoGame.whatTurn()
-                                    if unoGame.playCard(card: unoGame.players[0].cards[index], player: unoGame.players[0]) {
+                                unoGame.whatTurn()
+                                    if unoGame.players[0].cards[index].number == 13 || unoGame.players[0].cards[index].number == 14 {
+                                        unoGame.chooseColor(card: unoGame.players[0].cards[index], player: unoGame.players[0])
+                                    } else if unoGame.playCard(card: unoGame.players[0].cards[index], player: unoGame.players[0], desiredColor: chosenColor) {
                                         unoGame.compAI()
                                     }
                                 }
@@ -169,23 +176,42 @@ struct GameView: View {
                             unoGame.newGame()
                             unoGame.dealCards()
                         }
-//                    RoundedRectangle(cornerRadius: 20)
-//                        .frame(width: 100.0, height: 75.0)
-//                        .foregroundColor(.red)
-//                        .overlay(Text("Draw").font(.title).foregroundColor(.white))
-//                        .onTapGesture {
-//                            unoGame.draw()
-//                            if unoGame.turn != 1 {
-//                                unoGame.compAI()
-//                            }
-//                        }
+                    RoundedRectangle(cornerRadius: 20)
+                        .frame(width: 100.0, height: 75.0)
+                        .foregroundColor(.red)
+                        .overlay(Text("Turn").font(.title).foregroundColor(.white))
+                        .onTapGesture {
+                            print(unoGame.canPlay)
+                        }
                 }.padding()
             }
             .onAppear {
-                unoGame.dealCards()
+                if !unoGame.alreadyDealt{
+                    unoGame.dealCards()
+                }
             }
         }
         .padding()
+        .overlay(alignment: .bottom) {
+            if unoGame.chooseColorPopUp {
+                ColorPicker(chosenColor: self.$chosenColor)
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if unoGame.winnerPopUp {
+                WinningView(won: self.$won)
+            }
+        }
+        .onChange(of: chosenColor) { newColor in
+            unoGame.chooseColorPopUp.toggle()
+            if unoGame.playCard(card: unoGame.wildCard, player: unoGame.wildPlayer, desiredColor: chosenColor) {
+                unoGame.compAI()
+            }
+        }
+        .onChange(of: won) { newColor in
+            unoGame.winnerPopUp.toggle()
+            won = false
+        }
     }
     // MARK: - Helpers
 //    private func columns(for size: CGSize) -> [GridItem] {
