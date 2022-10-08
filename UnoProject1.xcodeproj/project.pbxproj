@@ -17,6 +17,7 @@
 		6275D26728D3B6C700BA07E2 /* Array+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6275D26628D3B6C700BA07E2 /* Array+Identifiable.swift */; };
 		629AB1B028EE406A00DC713E /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629AB1AF28EE406A00DC713E /* ColorPicker.swift */; };
 		629AB1B228EE90F800DC713E /* WinningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629AB1B128EE90F800DC713E /* WinningView.swift */; };
+		629AB1B428EF9CEA00DC713E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629AB1B328EF9CEA00DC713E /* ContentView.swift */; };
 		62A753CE28DCB1940031B9F2 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A753CD28DCB1940031B9F2 /* StartView.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +33,7 @@
 		6275D26628D3B6C700BA07E2 /* Array+Identifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Identifiable.swift"; sourceTree = "<group>"; };
 		629AB1AF28EE406A00DC713E /* ColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		629AB1B128EE90F800DC713E /* WinningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinningView.swift; sourceTree = "<group>"; };
+		629AB1B328EF9CEA00DC713E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		62A753CD28DCB1940031B9F2 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,6 +110,7 @@
 				62A753CD28DCB1940031B9F2 /* StartView.swift */,
 				629AB1AF28EE406A00DC713E /* ColorPicker.swift */,
 				629AB1B128EE90F800DC713E /* WinningView.swift */,
+				629AB1B328EF9CEA00DC713E /* ContentView.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -196,6 +199,7 @@
 				6275D26228D3AE2200BA07E2 /* UnoGameViewModel.swift in Sources */,
 				6275D24D28D3AD5B00BA07E2 /* UnoProject1App.swift in Sources */,
 				629AB1B228EE90F800DC713E /* WinningView.swift in Sources */,
+				629AB1B428EF9CEA00DC713E /* ContentView.swift in Sources */,
 				6275D26428D3AE4100BA07E2 /* CardView.swift in Sources */,
 				6275D26728D3B6C700BA07E2 /* Array+Identifiable.swift in Sources */,
 				62A753CE28DCB1940031B9F2 /* StartView.swift in Sources */,

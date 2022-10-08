@@ -18,6 +18,9 @@ struct StartView: View {
                         GameView(unoGame: UnoGameViewModel())
 //                            .navigationTitle("Uno!")
                     }
+                    NavigationLink("Practice Space") {
+                        ContentView(unoGame: UnoGameViewModel())
+                    }
                     NavigationLink("Record") {
                         Capsule().fill(.purple)
 //                            .navigationTitle("Uno!")

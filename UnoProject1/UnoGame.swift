@@ -29,7 +29,8 @@ struct UnoGame<CardContent> where CardContent: Equatable {
             Player(id: 1),
             Player(id: 2),
             Player(id: 3),
-            Player(id: 4)
+            Player(id: 4),
+            Player(id: 5)
         ]
         
         inPlayCards = Array<Card>()
@@ -180,7 +181,18 @@ struct UnoGame<CardContent> where CardContent: Equatable {
             playerCard.isDealt = false
             players[3].cards.append(playerCard)
             cards.removeFirst(1)
+            
+            
         }
+        
+        for _ in 0...0 {
+            var playerCard = cards.first!
+            
+        }
+        var playerCard = cards.first!
+        playerCard.isDealt = false
+        players[4].cards.append(playerCard)
+        cards.removeFirst(1)
         
         firstCard = cards.first!
         firstCard.isFaceUp.toggle()
@@ -313,7 +325,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         fileprivate(set) var isDealt = true
         var tilt = Double.random(in: -3...3)
         var player = 0
-        var isFaceUp = false
+        var isFaceUp = true
         var number: Int
         var color: Color
         var id: Int
