@@ -29,8 +29,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
             Player(id: 1),
             Player(id: 2),
             Player(id: 3),
-            Player(id: 4),
-            Player(id: 5)
+            Player(id: 4)
         ]
         
         inPlayCards = Array<Card>()
@@ -181,18 +180,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
             playerCard.isDealt = false
             players[3].cards.append(playerCard)
             cards.removeFirst(1)
-            
-            
         }
-        
-        for _ in 0...0 {
-            var playerCard = cards.first!
-            
-        }
-        var playerCard = cards.first!
-        playerCard.isDealt = false
-        players[4].cards.append(playerCard)
-        cards.removeFirst(1)
         
         firstCard = cards.first!
         firstCard.isFaceUp.toggle()
@@ -211,7 +199,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         displayMessage = ""
     }
     
-    mutating func playCard(card: Card, player: Player, desiredColor: Color = Color.red, message: String = "") {
+    mutating func playCard(card: Card, player: Player, desiredColor: Color = Color.red, message: String = "") -> Card {
         if let chosenPlayerIndex = players.firstIndex(matching: player) {
             if let chosenCardIndex = players[chosenPlayerIndex].cards.firstIndex(matching: card) {
                 var playedCard = players[chosenPlayerIndex].cards.remove(at: chosenCardIndex)
@@ -223,53 +211,18 @@ struct UnoGame<CardContent> where CardContent: Equatable {
                         playedCard.color = desiredColor
                     }
                 }
-                inPlayCards.append(playedCard)
+//                inPlayCards.append(playedCard)
                 displayMessage = message
+                return playedCard
             }
         }
+        return cards.first!
     }
-//                var playedCard = p1Cards.remove(at: chosenIndex)
-//                if playedCard.color == Color.black {
-//                    playedCard.color = Color.red
-//                    card.color = Color.red
-//                }
-//                inPlayCards.append(playedCard)
-//            }
-//        } else if  player == 2 {
-//            if let chosenIndex = p2Cards.firstIndex(matching: card) {
-//                var playedCard = p2Cards.remove(at: chosenIndex)
-//                playedCard.isFaceUp.toggle()
-//                if playedCard.color == Color.black {
-//                    playedCard.color = Color.red
-//                    card.color = Color.red
-//                }
-//                inPlayCards.append(playedCard)
-//            }
-//        } else if player == 3 {
-//            if let chosenIndex = p3Cards.firstIndex(matching: card) {
-//                var playedCard = p3Cards.remove(at: chosenIndex)
-//                playedCard.isFaceUp.toggle()
-//                if playedCard.color == Color.black {
-//                    playedCard.color = Color.red
-//                    card.color = Color.red
-//                }
-//                inPlayCards.append(playedCard)
-//            }
-//        } else {
-//            if let chosenIndex = p4Cards.firstIndex(matching: card) {
-//                var playedCard = p4Cards.remove(at: chosenIndex)
-//                playedCard.isFaceUp.toggle()
-//                if playedCard.color == Color.black {
-//                    playedCard.color = Color.red
-//                    card.color = Color.red
-//                }
-//                inPlayCards.append(playedCard)
-//            }
-//        }
-//        topCardNumber = card.number
-//        topCardColor = card.color
-//    }
     
+    mutating func discard(card: Card) {
+        inPlayCards.append(card)
+    }
+
     mutating func drawCard(card: Card, player: Player, message: String = "") {
         if let chosenPlayerIndex = players.firstIndex(matching: player) {
             if let chosenIndex = cards.firstIndex(matching: card) {
@@ -282,24 +235,6 @@ struct UnoGame<CardContent> where CardContent: Equatable {
             }
         }
     }
-//        if var topCard = cards.last! {
-//            if let chosenIndex = cards.firstIndex(matching: cards.l) {
-//                cards[chosenIndex].player = 5
-//            cards.removeLast(1)
-//
-//            if player == 1 {
-//                topCard.isFaceUp.toggle()
-//                p1Cards.append(topCard)
-//            } else if player == 2 {
-//                p2Cards.append(topCard)
-//            } else if player == 3 {
-//                p3Cards.append(topCard)
-//            } else {
-//                p4Cards.append(topCard)
-//            }
-//        }
-//    }
-
     
     mutating func deal(cardIndex: Int) {
         if cardIndex >= 0 && cardIndex < handSize {
@@ -316,6 +251,27 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         }
     }
     
+    mutating func findPosition(card: Card, player: Player, x: CGFloat, y: CGFloat) {
+        if let chosenPlayerIndex = players.firstIndex(matching: player) {
+            if let chosenCardIndex =
+                players[chosenPlayerIndex].cards.firstIndex(matching: card) {
+                players[chosenPlayerIndex].cards[chosenCardIndex].x = x
+                players[chosenPlayerIndex].cards[chosenCardIndex].y = y
+            }
+        }
+    }
+    
+    mutating func getNumInHand(card: Card, player: Player) -> Int {
+        var numInHand = 0
+        if let chosenPlayerIndex = players.firstIndex(matching: player) {
+            if let chosenCardIndex =
+                players[chosenPlayerIndex].cards.firstIndex(matching: card) {
+                numInHand = chosenCardIndex + 1
+            }
+        }
+        return numInHand
+    }
+    
     struct Player: Identifiable {
         var cards = Array<Card>()
         var id: Int
@@ -328,7 +284,10 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         var isFaceUp = true
         var number: Int
         var color: Color
+        var x: CGFloat = 0
+        var y: CGFloat = 0
         var id: Int
+        var numInHand: Int = 0
     }
 }
 

@@ -35,6 +35,44 @@ class UnoGameViewModel: ObservableObject {
     var inPlayCards: Array<UnoGame<String>.Card> {
         game.inPlayCards
     }
+    
+    var player1Spacing: Double {
+        let spacing = getSpacing(numCards: Double(game.players[0].cards.count))
+        if spacing < -25 {
+            return spacing
+        } else {
+            return -25
+        }
+    }
+    
+    var player2Spacing: Double {
+        let spacing = getSpacing(numCards: Double(game.players[1].cards.count))
+        if spacing < -25 {
+            return spacing
+        } else {
+            return -25
+        }
+    }
+    
+    var player3Spacing: Double {
+        let spacing = getSpacing(numCards: Double(game.players[2].cards.count))
+        if spacing < -25 {
+            return spacing
+        } else {
+            return -25
+        }
+    }
+    
+    var player4Spacing: Double {
+        let spacing = getSpacing(numCards: Double(game.players[3].cards.count))
+        if spacing < -25 {
+            return spacing
+        } else {
+            return -25
+        }
+    }
+    
+    
     var canPlay: Bool = true
     
     var alreadyDealt: Bool = false
@@ -87,7 +125,7 @@ class UnoGameViewModel: ObservableObject {
                 } else if playerTurn < 1 {
                     playerTurn = 4
                 }
-                compAI()
+//                compAI()
             } else {
                 playerTurn += isReverse
                 if playerTurn > 4 {
@@ -101,7 +139,17 @@ class UnoGameViewModel: ObservableObject {
     }
     
     func playCard2(card: UnoGame<String>.Card, player: UnoGame<String>.Player, desiredColor: Color = Color.red){
-        game.playCard(card: card, player: player, desiredColor: desiredColor, message: specialMessage)
+        var playedCard = cards.first!
+        withAnimation (
+            Animation.easeInOut(duration: 1.2)
+        ) {
+            playedCard = game.playCard(card: card, player: player, desiredColor: desiredColor, message: specialMessage)
+        }
+        withAnimation (
+            Animation.linear(duration: 0.1).delay(1.1)
+        ) {
+            game.discard(card: playedCard)
+        }
     }
     
     func playCard(card: UnoGame<String>.Card, player: UnoGame<String>.Player, desiredColor: Color = Color.red) -> Bool {
@@ -110,13 +158,13 @@ class UnoGameViewModel: ObservableObject {
             objectWillChange.send()
             specialMessage = getSpecialMessage(card: card)
             
-//            withAnimation (
-//                Animation.easeOut(duration: 0.3).delay(Double(turn) * 1)
-//            ) {
+            withAnimation (
+                Animation.easeOut(duration: 1.2).delay(0)
+            ) {
                 game.playCard(card: card, player: player, desiredColor: desiredColor, message: specialMessage)
                 turn += 1
                 objectWillChange.send()
-//            }
+            }
             if card.number > 9 {
                 specialCard(card: card, player: player)
             }
@@ -269,6 +317,28 @@ class UnoGameViewModel: ObservableObject {
         }
     }
     
+    func findPosition(card: UnoGame<String>.Card, player: UnoGame<String>.Player, x: CGFloat, y: CGFloat) {
+        game.findPosition(card: card, player: player, x: x, y: y)
+    }
+    
+    func getNumInHand(card: UnoGame<String>.Card, player: UnoGame<String>.Player) -> Int {
+        return game.getNumInHand(card: card, player: player)
+    }
+    
+    func spaceFromDiscard(numInHand: Int, handCount: Int, spacing: Double) -> CGFloat {
+        var midToDiscard: Double = 0
+        if handCount.isMultiple(of: 2) {
+            midToDiscard = spacing / 2 + 30
+        } else {
+            midToDiscard = 40
+        }
+        let middle: Int = (handCount / 2) + 1
+        let numFromMiddle = middle - numInHand
+        let multiplier = (spacing * Double(numFromMiddle)) + (70 * Double(numFromMiddle))
+        let toDiscard = multiplier + midToDiscard
+        return toDiscard
+    }
+    
     func whatTurn() {
         print("Player \(playerTurn) Went")
     }
@@ -294,5 +364,9 @@ class UnoGameViewModel: ObservableObject {
             return true
         }
         return false
+    }
+    
+    private func getSpacing(numCards: Double) -> Double {
+        return -1 * (((70 * numCards) - 280) / numCards)
     }
 }
