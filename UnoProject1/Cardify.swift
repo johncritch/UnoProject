@@ -19,9 +19,11 @@ struct Cardify: AnimatableModifier {
     }
     
     var rotation: Double
+    var diagonalFlip: Double
     var thisCard: UnoGame<String>.Card
     
-    init(isFaceUp: Bool, card: UnoGame<String>.Card) {
+    init(isFaceUp: Bool, card: UnoGame<String>.Card, isDiagonal: Bool) {
+        diagonalFlip = isDiagonal ? 0 : 1
         rotation = isFaceUp ? 0 : 180
         thisCard = card
     }
@@ -239,7 +241,7 @@ struct Cardify: AnimatableModifier {
             content.opacity(isFaceUp ? 1:0)
         }
         .transition(.scale)
-        .rotation3DEffect(Angle.degrees(rotation), axis: (x: 0, y: 1, z: 0))
+        .rotation3DEffect(Angle.degrees(rotation), axis: (x: diagonalFlip, y: 1, z: 0))
     }
     //MARK: - Drawing constants
     
@@ -249,7 +251,7 @@ struct Cardify: AnimatableModifier {
 }
 
 extension View {
-    func cardify(isFaceUp: Bool, card: UnoGame<String>.Card) -> some View {
-        modifier(Cardify(isFaceUp: isFaceUp, card: card))
+    func cardify(isFaceUp: Bool, card: UnoGame<String>.Card, isDiagonal: Bool) -> some View {
+        modifier(Cardify(isFaceUp: isFaceUp, card: card, isDiagonal: isDiagonal))
     }
 }

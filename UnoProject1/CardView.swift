@@ -19,7 +19,7 @@ struct CardView: View {
                     RoundedRectangle(cornerRadius: Card.cornerRadius).opacity(0)
                 }
             }
-            .cardify(isFaceUp: card.isFaceUp, card: card)
+            .cardify(isFaceUp: card.isFaceUp, card: card, isDiagonal: !card.player.isMultiple(of: 2))
             .foregroundColor(.black)
         }
         .frame(width: 70, height: 105)
@@ -41,7 +41,7 @@ struct CardView: View {
 
 struct CardView_Previews: PreviewProvider {
     static var previews: some View {
-        CardView(card: UnoGame<String>.Card(isFaceUp: false, number: 5, color: .black, id: 1))
+        CardView(card: UnoGame<String>.Card(player: 2, isFaceUp: false, number: 5, color: .black, id: 1))
             .padding(100)
     }
 }

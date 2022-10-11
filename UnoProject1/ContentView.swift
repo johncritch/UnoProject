@@ -48,8 +48,9 @@ struct ContentView: View {
                 ZStack {
                     ForEach(unoGame.cards) { card in
                         CardView(card: card)
+                            .rotationEffect(Angle(degrees: card.tilt))
                             .onTapGesture {
-                                unoGame.draw(player: unoGame.players[2])
+                                unoGame.draw(player: unoGame.players[unoGame.turn])
                             }
                     }
                 }
@@ -59,20 +60,22 @@ struct ContentView: View {
                 ZStack {
                     ForEach(unoGame.inPlayCards) { card in
                         CardView(card: card)
+                            .rotationEffect(Angle(degrees: card.tilt))
                     }
                 }
                 .coordinateSpace(name: "discard")
                 .position(x: reader.size.width * 1/2 + 40, y: reader.size.height * 1/2)
                 
                 HStack(spacing: unoGame.player1Spacing) {
-                    ForEach(unoGame.players[0].cards) { card in
+                    ForEach(unoGame.players[1].cards) { card in
                         CardView(card: card)
+                            .rotationEffect(Angle(degrees: card.tilt))
                             .transition(AnyTransition.offset(x: card.x, y: card.y))
                             .onTapGesture {
-                                let numInHand = unoGame.getNumInHand(card: card, player: unoGame.players[0])
-                                let spaceFromDiscard = unoGame.spaceFromDiscard(numInHand: numInHand,handCount: unoGame.players[0].cards.count, spacing: unoGame.player1Spacing)
-                                unoGame.findPosition(card: card, player: unoGame.players[0], x: spaceFromDiscard, y: (reader.size.height/2 - 55) * -1)
-                                unoGame.playCard2(card: card, player: unoGame.players[0])
+                                let numInHand = unoGame.getNumInHand(card: card, player: unoGame.players[1])
+                                let spaceFromDiscard = unoGame.spaceFromDiscard(numInHand: numInHand,handCount: unoGame.players[1].cards.count, spacing: unoGame.player1Spacing, isOnSide: false)
+                                unoGame.findPosition(card: card, player: unoGame.players[1], x: spaceFromDiscard, y: (reader.size.height/2 - 55) * -1)
+                                unoGame.playCard2(card: card, player: unoGame.players[1])
                             }
                     }
                 }
@@ -80,15 +83,15 @@ struct ContentView: View {
                 .position(x: reader.size.width * 1/2, y: reader.size.height - 55)
                 
                 VStack(spacing: unoGame.player2Spacing - 30) {
-                    ForEach(unoGame.players[1].cards) { card in
+                    ForEach(unoGame.players[2].cards) { card in
                         CardView(card: card)
-                            .rotationEffect(Angle.degrees(-90))
+                            .rotationEffect(Angle(degrees: card.tilt))
                             .transition(AnyTransition.offset(x: card.x, y: card.y))
                             .onTapGesture {
-                                let numInHand = unoGame.getNumInHand(card: card, player: unoGame.players[1])
-                                let spaceFromDiscard = unoGame.spaceFromDiscard(numInHand: numInHand,handCount: unoGame.players[1].cards.count, spacing: unoGame.player2Spacing)
-                                unoGame.findPosition(card: card, player: unoGame.players[1], x: spaceFromDiscard, y: reader.size.height/2 - 55)
-                                unoGame.playCard2(card: card, player: unoGame.players[1])
+                                let numInHand = unoGame.getNumInHand(card: card, player: unoGame.players[2])
+                                let spaceFromDiscard = unoGame.spaceFromDiscard(numInHand: numInHand,handCount: unoGame.players[2].cards.count, spacing: unoGame.player2Spacing, isOnSide: true)
+                                unoGame.findPosition(card: card, player: unoGame.players[2], x: ((reader.size.width/2 - 95) * -1), y: spaceFromDiscard)
+                                unoGame.playCard2(card: card, player: unoGame.players[2])
                             }
                     }
                 }
@@ -97,13 +100,14 @@ struct ContentView: View {
            
 
                 HStack(spacing: unoGame.player3Spacing) {
-                    ForEach(unoGame.players[2].cards) { card in
+                    ForEach(unoGame.players[3].cards) { card in
                         CardView(card: card)
+                            .rotationEffect(Angle(degrees: card.tilt))
                             .onTapGesture {
-                                let numInHand = unoGame.getNumInHand(card: card, player: unoGame.players[2])
-                                let spaceFromDiscard = unoGame.spaceFromDiscard(numInHand: numInHand,handCount: unoGame.players[2].cards.count, spacing: unoGame.player3Spacing)
-                                unoGame.findPosition(card: card, player: unoGame.players[2], x: spaceFromDiscard, y: reader.size.height/2 - 55)
-                                unoGame.playCard2(card: card, player: unoGame.players[2])
+                                let numInHand = unoGame.getNumInHand(card: card, player: unoGame.players[3])
+                                let spaceFromDiscard = unoGame.spaceFromDiscard(numInHand: numInHand,handCount: unoGame.players[3].cards.count, spacing: unoGame.player3Spacing, isOnSide: false)
+                                unoGame.findPosition(card: card, player: unoGame.players[3], x: spaceFromDiscard, y: reader.size.height/2 - 55)
+                                unoGame.playCard2(card: card, player: unoGame.players[3])
                             }
                             .transition(AnyTransition.offset(x: card.x, y: card.y))
                     }
@@ -113,15 +117,15 @@ struct ContentView: View {
                     
       
                 VStack(spacing: unoGame.player4Spacing - 30) {
-                    ForEach(unoGame.players[3].cards) { card in
+                    ForEach(unoGame.players[4].cards) { card in
                         CardView(card: card)
-                            .rotationEffect(Angle.degrees(90))
+                            .rotationEffect(Angle(degrees: card.tilt))
                             .transition(AnyTransition.offset(x: card.x, y: card.y))
                             .onTapGesture {
-                                let numInHand = unoGame.getNumInHand(card: card, player: unoGame.players[3])
-                                let spaceFromDiscard = unoGame.spaceFromDiscard(numInHand: numInHand,handCount: unoGame.players[3].cards.count, spacing: unoGame.player4Spacing)
-                                unoGame.findPosition(card: card, player: unoGame.players[3], x: spaceFromDiscard, y: reader.size.height/2 - 55)
-                                unoGame.playCard2(card: card, player: unoGame.players[3])
+                                let numInHand = unoGame.getNumInHand(card: card, player: unoGame.players[4])
+                                let spaceFromDiscard = unoGame.spaceFromDiscard(numInHand: numInHand,handCount: unoGame.players[4].cards.count, spacing: unoGame.player4Spacing, isOnSide: true)
+                                unoGame.findPosition(card: card, player: unoGame.players[4], x: (reader.size.width/2 - 15), y: spaceFromDiscard)
+                                unoGame.playCard2(card: card, player: unoGame.players[4])
                             }
                     }
                 }

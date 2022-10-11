@@ -26,6 +26,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         cards = Array<Card>()
         
         players = [
+            Player(id: 0),
             Player(id: 1),
             Player(id: 2),
             Player(id: 3),
@@ -163,22 +164,26 @@ struct UnoGame<CardContent> where CardContent: Equatable {
             var playerCard = cards.first!
             playerCard.isFaceUp = true
             playerCard.isDealt = false
-            players[0].cards.append(playerCard)
-            cards.removeFirst(1)
-            
-            playerCard = cards.first!
-            playerCard.isDealt = false
+            playerCard.player = 1
             players[1].cards.append(playerCard)
             cards.removeFirst(1)
             
             playerCard = cards.first!
             playerCard.isDealt = false
+            playerCard.player = 2
             players[2].cards.append(playerCard)
             cards.removeFirst(1)
             
             playerCard = cards.first!
             playerCard.isDealt = false
+            playerCard.player = 3
             players[3].cards.append(playerCard)
+            cards.removeFirst(1)
+            
+            playerCard = cards.first!
+            playerCard.isDealt = false
+            playerCard.player = 4
+            players[4].cards.append(playerCard)
             cards.removeFirst(1)
         }
         
@@ -246,16 +251,16 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     
     mutating func deal(cardIndex: Int) {
         if cardIndex >= 0 && cardIndex < handSize {
-            players[0].cards[cardIndex].isDealt = true
+            players[1].cards[cardIndex].isDealt = true
         }
         if cardIndex >= handSize && cardIndex < handSize * 2 {
-            players[1].cards[cardIndex - handSize].isDealt = true
+            players[2].cards[cardIndex - handSize].isDealt = true
         }
         if cardIndex >= handSize * 2 && cardIndex < handSize * 3 {
-            players[2].cards[cardIndex - (handSize * 2)].isDealt = true
+            players[3].cards[cardIndex - (handSize * 2)].isDealt = true
         }
         if cardIndex >= handSize * 3 && cardIndex < handSize * 4 {
-            players[3].cards[cardIndex - (handSize * 3)].isDealt = true
+            players[4].cards[cardIndex - (handSize * 3)].isDealt = true
         }
     }
     
@@ -288,7 +293,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     struct Card: Identifiable {
         fileprivate(set) var isDealt = true
         var tilt = Double.random(in: -3...3)
-        var player = 0
+        var player = 5
         var isFaceUp = false
         var number: Int
         var color: Color
