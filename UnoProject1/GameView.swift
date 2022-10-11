@@ -71,7 +71,7 @@ struct GameView: View {
                                         //                                    .transition(AnyTransition.offset(x: 50, y: 50))
                                             .onTapGesture {
                                                 unoGame.draw(player: unoGame.players[0])
-                                                if unoGame.turn != 1 {
+                                                if unoGame.turnAnimation != 1 {
                                                     //                                            unoGame.compAI()
                                                 }
                                             }

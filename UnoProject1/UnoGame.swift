@@ -26,11 +26,11 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         cards = Array<Card>()
         
         players = [
-            Player(id: 0),
-            Player(id: 1),
-            Player(id: 2),
-            Player(id: 3),
-            Player(id: 4)
+            Player(isOnSide: false, id: 0),
+            Player(isOnSide: false, id: 1),
+            Player(isOnSide: true, id: 2),
+            Player(isOnSide: false, id: 3),
+            Player(isOnSide: true, id: 4)
         ]
         
         inPlayCards = Array<Card>()
@@ -287,6 +287,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     
     struct Player: Identifiable {
         var cards = Array<Card>()
+        var isOnSide: Bool
         var id: Int
     }
     

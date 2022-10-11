@@ -37,41 +37,24 @@ class UnoGameViewModel: ObservableObject {
     }
     
     var player1Spacing: Double {
-        let spacing = getSpacing(numCards: Double(game.players[1].cards.count))
-        if spacing < -30 {
-            return spacing
-        } else {
-            return -30
-        }
+        getSpacing(numCards: Double(game.players[1].cards.count))
     }
     
     var player2Spacing: Double {
-        let spacing = getSpacing(numCards: Double(game.players[2].cards.count))
-        if spacing < -30 {
-            return spacing
-        } else {
-            return -30
-        }
+        getSpacing(numCards: Double(game.players[2].cards.count))
     }
     
     var player3Spacing: Double {
-        let spacing = getSpacing(numCards: Double(game.players[3].cards.count))
-        if spacing < -30 {
-            return spacing
-        } else {
-            return -30
-        }
+        getSpacing(numCards: Double(game.players[3].cards.count))
     }
     
     var player4Spacing: Double {
-        let spacing = getSpacing(numCards: Double(game.players[4].cards.count))
-        if spacing < -30 {
-            return spacing
-        } else {
-            return -30
-        }
+        getSpacing(numCards: Double(game.players[4].cards.count))
     }
     
+    var geometryWidth: Double = 0
+    
+    var geometryHeight: Double = 0
     
     var canPlay: Bool = true
     
@@ -83,11 +66,11 @@ class UnoGameViewModel: ObservableObject {
     
     var wildCard: UnoGame<String>.Card = UnoGame.Card(number: 12, color: Color.blue, id: 200)
     
-    var wildPlayer: UnoGame<String>.Player = UnoGame.Player(id: 10)
+    var wildPlayer: UnoGame<String>.Player = UnoGame.Player(isOnSide: false, id: 10)
 
     var playerTurn = 1
     
-    var turn = 3
+    var turnAnimation = 0
     
     var playable = false
     
@@ -139,6 +122,21 @@ class UnoGameViewModel: ObservableObject {
     }
     
     func playCard2(card: UnoGame<String>.Card, player: UnoGame<String>.Player, desiredColor: Color = Color.red){
+
+        let numInHand = getNumInHand(card: card, player: player)
+        let spacing = getSpacing(numCards: Double(player.cards.count))
+        let spaceFromDiscard = spaceFromDiscard(numInHand: numInHand, handCount: player.cards.count, spacing: spacing, isOnSide: player.isOnSide)
+        if player.id == 1 {
+            findPosition(card: card, player: player, x: spaceFromDiscard, y: (geometryHeight/2 - 120) * -1)
+        } else if player.id == 2 {
+            findPosition(card: card, player: player, x: (geometryWidth/2 - 95) * -1, y: spaceFromDiscard)
+        } else if player.id == 3 {
+            findPosition(card: card, player: player, x: spaceFromDiscard, y: geometryHeight/2 - 120)
+        } else {
+            findPosition(card: card, player: player, x: geometryWidth/2 - 15, y: spaceFromDiscard)
+        }
+        
+        
         var playedCard = cards.first!
         withAnimation (
             Animation.linear(duration: 1).delay(0.3)
@@ -167,7 +165,7 @@ class UnoGameViewModel: ObservableObject {
                 Animation.easeOut(duration: 1.2).delay(0)
             ) {
                 game.playCard(card: card, player: player, desiredColor: desiredColor, message: specialMessage)
-                turn += 1
+                turnAnimation += 1
                 objectWillChange.send()
             }
             if card.number > 9 {
@@ -229,12 +227,12 @@ class UnoGameViewModel: ObservableObject {
             }
             for _ in 0...1 {
                 withAnimation (
-                    Animation.easeIn(duration: 0.3).delay(Double(turn) * 1)
+                    Animation.easeIn(duration: 0.3).delay(Double(turnAnimation) * 1)
                 ) {
                     if let drawnCard = cards.last {
                         game.drawCard(card: drawnCard, player: players[playerTurn - 1], message: specialMessage)
                     }
-                    turn += 1
+                    turnAnimation += 1
                 }
             }
             print("Draw 2!")
@@ -248,12 +246,12 @@ class UnoGameViewModel: ObservableObject {
             }
             for _ in 0...3 {
                 withAnimation (
-                    Animation.easeIn(duration: 0.3).delay(Double(turn) * 1)
+                    Animation.easeIn(duration: 0.3).delay(Double(turnAnimation) * 1)
                 ) {
                     if let drawnCard = cards.last {
                         game.drawCard(card: drawnCard, player: players[playerTurn - 1], message: specialMessage)
                     }
-                    turn += 1
+                    turnAnimation += 1
                 }
             }
             print("Draw 4!")
@@ -262,7 +260,7 @@ class UnoGameViewModel: ObservableObject {
     
     func newGame() {
         playerTurn = 1
-        turn = 0
+        turnAnimation = 0
         playable = false
         isReverse = 1
         game = UnoGameViewModel.createGame()
@@ -286,7 +284,7 @@ class UnoGameViewModel: ObservableObject {
     func compAI() {
         while playerTurn != 1 {
             withAnimation (
-                Animation.easeOut(duration: 0.3).delay(Double(turn) * 1)
+                Animation.easeOut(duration: 0.3).delay(Double(turnAnimation) * 1)
             ) {
                 whatTurn()
                 let player = players[playerTurn - 1]
@@ -301,7 +299,7 @@ class UnoGameViewModel: ObservableObject {
                 if !playable {
                     draw(player: player)
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(turn)) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(turnAnimation)) {
                     if self.playerTurn == 1 {
                         self.canPlay = true
                     }
@@ -310,7 +308,7 @@ class UnoGameViewModel: ObservableObject {
             }
         }
         print("Back to you---------------------")
-        turn = 0
+        turnAnimation = 0
     }
     
     func chooseColor(card: UnoGame<String>.Card, player: UnoGame<String>.Player) {
@@ -377,6 +375,11 @@ class UnoGameViewModel: ObservableObject {
     }
     
     private func getSpacing(numCards: Double) -> Double {
-        return -1 * (((70 * numCards) - 280) / numCards)
+        var spacing = -1 * (((70 * numCards) - 280) / numCards)
+        if spacing < -30 {
+            return spacing
+        } else {
+            return -30
+        }
     }
 }
