@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6237235F28F4C817000B4F65 /* Cardify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6237235E28F4C817000B4F65 /* Cardify.swift */; };
 		6275D24D28D3AD5B00BA07E2 /* UnoProject1App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6275D24C28D3AD5B00BA07E2 /* UnoProject1App.swift */; };
 		6275D24F28D3AD5B00BA07E2 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6275D24E28D3AD5B00BA07E2 /* GameView.swift */; };
 		6275D25128D3AD5C00BA07E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6275D25028D3AD5C00BA07E2 /* Assets.xcassets */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6237235E28F4C817000B4F65 /* Cardify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cardify.swift; sourceTree = "<group>"; };
 		6275D24928D3AD5B00BA07E2 /* UnoProject1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnoProject1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6275D24C28D3AD5B00BA07E2 /* UnoProject1App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnoProject1App.swift; sourceTree = "<group>"; };
 		6275D24E28D3AD5B00BA07E2 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -104,13 +106,14 @@
 		6275D25C28D3AD9300BA07E2 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				6275D26328D3AE4100BA07E2 /* CardView.swift */,
 				6275D24E28D3AD5B00BA07E2 /* GameView.swift */,
 				6275D24C28D3AD5B00BA07E2 /* UnoProject1App.swift */,
 				62A753CD28DCB1940031B9F2 /* StartView.swift */,
 				629AB1AF28EE406A00DC713E /* ColorPicker.swift */,
 				629AB1B128EE90F800DC713E /* WinningView.swift */,
 				629AB1B328EF9CEA00DC713E /* ContentView.swift */,
+				6275D26328D3AE4100BA07E2 /* CardView.swift */,
+				6237235E28F4C817000B4F65 /* Cardify.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -193,6 +196,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6237235F28F4C817000B4F65 /* Cardify.swift in Sources */,
 				6275D25E28D3ADEC00BA07E2 /* UnoGame.swift in Sources */,
 				629AB1B028EE406A00DC713E /* ColorPicker.swift in Sources */,
 				6275D24F28D3AD5B00BA07E2 /* GameView.swift in Sources */,

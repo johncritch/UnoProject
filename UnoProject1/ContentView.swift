@@ -26,6 +26,9 @@ struct ContentView: View {
                 VStack {
                     RoundedRectangle(cornerRadius: 10)
                         .foregroundColor(.red)
+                        .overlay(Text(String(unoGame.player3Spacing)).font(.title).foregroundColor(.white))
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundColor(.red)
                         .overlay(Text("New Game").font(.title).foregroundColor(.white))
                         .onTapGesture {
                             unoGame.newGame()
@@ -96,13 +99,13 @@ struct ContentView: View {
                 HStack(spacing: unoGame.player3Spacing) {
                     ForEach(unoGame.players[2].cards) { card in
                         CardView(card: card)
-                            .transition(AnyTransition.offset(x: card.x, y: card.y))
                             .onTapGesture {
                                 let numInHand = unoGame.getNumInHand(card: card, player: unoGame.players[2])
                                 let spaceFromDiscard = unoGame.spaceFromDiscard(numInHand: numInHand,handCount: unoGame.players[2].cards.count, spacing: unoGame.player3Spacing)
                                 unoGame.findPosition(card: card, player: unoGame.players[2], x: spaceFromDiscard, y: reader.size.height/2 - 55)
                                 unoGame.playCard2(card: card, player: unoGame.players[2])
                             }
+                            .transition(AnyTransition.offset(x: card.x, y: card.y))
                     }
                 }
                 .coordinateSpace(name: "player3")

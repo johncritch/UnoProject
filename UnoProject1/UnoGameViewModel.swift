@@ -56,10 +56,10 @@ class UnoGameViewModel: ObservableObject {
     
     var player3Spacing: Double {
         let spacing = getSpacing(numCards: Double(game.players[2].cards.count))
-        if spacing < -25 {
+        if spacing < -30 {
             return spacing
         } else {
-            return -25
+            return -30
         }
     }
     
@@ -141,9 +141,14 @@ class UnoGameViewModel: ObservableObject {
     func playCard2(card: UnoGame<String>.Card, player: UnoGame<String>.Player, desiredColor: Color = Color.red){
         var playedCard = cards.first!
         withAnimation (
-            Animation.easeInOut(duration: 1.2)
+            Animation.easeInOut(duration: 0.8).delay(0.3)
         ) {
             playedCard = game.playCard(card: card, player: player, desiredColor: desiredColor, message: specialMessage)
+        }
+        withAnimation (
+            Animation.linear(duration: 1.2)
+        ) {
+            game.remove(card: card, player: player)
         }
         withAnimation (
             Animation.linear(duration: 0.1).delay(1.1)
@@ -327,13 +332,13 @@ class UnoGameViewModel: ObservableObject {
     
     func spaceFromDiscard(numInHand: Int, handCount: Int, spacing: Double) -> CGFloat {
         var midToDiscard: Double = 0
+        let middle: Int = (handCount / 2) + 1
+        let numFromMiddle = middle - numInHand
         if handCount.isMultiple(of: 2) {
-            midToDiscard = spacing / 2 + 30
+            midToDiscard = spacing / -1.53
         } else {
             midToDiscard = 40
         }
-        let middle: Int = (handCount / 2) + 1
-        let numFromMiddle = middle - numInHand
         let multiplier = (spacing * Double(numFromMiddle)) + (70 * Double(numFromMiddle))
         let toDiscard = multiplier + midToDiscard
         return toDiscard

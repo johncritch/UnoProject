@@ -202,8 +202,9 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     mutating func playCard(card: Card, player: Player, desiredColor: Color = Color.red, message: String = "") -> Card {
         if let chosenPlayerIndex = players.firstIndex(matching: player) {
             if let chosenCardIndex = players[chosenPlayerIndex].cards.firstIndex(matching: card) {
-                var playedCard = players[chosenPlayerIndex].cards.remove(at: chosenCardIndex)
-                playedCard.isFaceUp = true
+                players[chosenPlayerIndex].cards[chosenCardIndex].isFaceUp = true
+//                var playedCard = players[chosenPlayerIndex].cards.remove(at: chosenCardIndex)
+                var playedCard = players[chosenPlayerIndex].cards[chosenCardIndex]
                 if playedCard.color == Color.black {
                     if player.id != 1 {
                         playedCard.color = colors.randomElement()!
@@ -211,12 +212,19 @@ struct UnoGame<CardContent> where CardContent: Equatable {
                         playedCard.color = desiredColor
                     }
                 }
-//                inPlayCards.append(playedCard)
                 displayMessage = message
                 return playedCard
             }
         }
         return cards.first!
+    }
+    
+    mutating func remove(card: Card, player: Player) {
+        if let chosenPlayerIndex = players.firstIndex(matching: player) {
+            if let chosenCardIndex = players[chosenPlayerIndex].cards.firstIndex(matching: card) {
+                players[chosenPlayerIndex].cards.remove(at: chosenCardIndex)
+            }
+        }
     }
     
     mutating func discard(card: Card) {
@@ -281,7 +289,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         fileprivate(set) var isDealt = true
         var tilt = Double.random(in: -3...3)
         var player = 0
-        var isFaceUp = true
+        var isFaceUp = false
         var number: Int
         var color: Color
         var x: CGFloat = 0
