@@ -201,7 +201,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         topCardNumber = inPlayCards[0].number
         topCardColor = inPlayCards[0].color
         
-        displayMessage = ""
+        displayMessage = "Howdy"
     }
     
     mutating func playCard(card: Card, player: Player, desiredColor: Color = Color.red, message: String = "") -> Card {
@@ -236,17 +236,14 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         inPlayCards.append(card)
     }
 
-    mutating func drawCard(card: Card, player: Player, message: String = "") {
-        if let chosenPlayerIndex = players.firstIndex(matching: player) {
-            if let chosenIndex = cards.firstIndex(matching: card) {
-                var drawnCard = cards.remove(at: chosenIndex)
-                if player.id == 1 {
-                    drawnCard.isFaceUp = true
-                }
-                players[chosenPlayerIndex].cards.append(drawnCard)
-                displayMessage = message
-            }
+    mutating func drawCard(player: Player, message: String = "") {
+        var drawnCard = cards.removeLast()
+        if player.id == 1 {
+            drawnCard.isFaceUp = true
         }
+        let chosenPlayerIndex = players.firstIndex(matching: player)
+        players[chosenPlayerIndex!].cards.append(drawnCard)
+        displayMessage = message
     }
     
     mutating func deal(cardIndex: Int) {

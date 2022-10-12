@@ -41,7 +41,7 @@ struct CardView: View {
 
 struct CardView_Previews: PreviewProvider {
     static var previews: some View {
-        CardView(card: UnoGame<String>.Card(player: 2, isFaceUp: false, number: 5, color: .black, id: 1))
+        CardView(card: UnoGame<String>.Card(player: 1, isFaceUp: true, number: 5, color: .blue, id: 1))
             .padding(100)
     }
 }

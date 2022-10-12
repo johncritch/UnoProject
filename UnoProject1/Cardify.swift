@@ -241,7 +241,7 @@ struct Cardify: AnimatableModifier {
             content.opacity(isFaceUp ? 1:0)
         }
         .transition(.scale)
-        .rotation3DEffect(Angle.degrees(rotation), axis: (x: diagonalFlip, y: 1, z: 0))
+        .rotation3DEffect(Angle.degrees(rotation), axis: (x: diagonalFlip, y: 1, z: 0.01))
     }
     //MARK: - Drawing constants
     

@@ -24,6 +24,7 @@ struct ContentView: View {
         GeometryReader { reader in
             ZStack {
                 VStack {
+                    Text(unoGame.displayMessage)
                     RoundedRectangle(cornerRadius: 10)
                         .foregroundColor(.red)
                         .overlay(Text("New Game").font(.title).foregroundColor(.white))
@@ -47,7 +48,7 @@ struct ContentView: View {
                         CardView(card: card)
                             .rotationEffect(Angle(degrees: card.tilt))
                             .onTapGesture {
-                                unoGame.draw(player: unoGame.players[unoGame.turnAnimation])
+                                unoGame.draw(player: unoGame.players[unoGame.playerTurn])
                             }
                     }
                 }
@@ -69,7 +70,9 @@ struct ContentView: View {
                             .rotationEffect(Angle(degrees: card.tilt))
                             .transition(AnyTransition.offset(x: card.x, y: card.y))
                             .onTapGesture {
-                                unoGame.playCard2(card: card, player: unoGame.players[1])
+                                if unoGame.playCard(card: card, player: unoGame.players[1]) {
+                                    unoGame.compAI()
+                                }
                             }
                     }
                 }

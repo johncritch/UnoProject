@@ -15,10 +15,6 @@ struct StartView: View {
             Form {
                 Section(header: Text("Game")) {
                     NavigationLink("Uno") {
-                        GameView(unoGame: UnoGameViewModel())
-//                            .navigationTitle("Uno!")
-                    }
-                    NavigationLink("Practice Space") {
                         ContentView(unoGame: UnoGameViewModel())
                     }
                     NavigationLink("Record") {
