@@ -193,24 +193,24 @@ struct Cardify: AnimatableModifier {
 
                     }.padding(8)
                     Image(systemName: "circle.hexagongrid.fill") .renderingMode(.original)
-                        .font(.title2)
+                        .font(.title3)
                         .bold()
-                        .position(x:15,y:15)
-                    Text("4")
+                        .position(x:55,y:15)
+                    Text("+4")
                         .foregroundColor(.white)
                         .font(.title2)
                         .bold()
-                        .position(x:15,y:15)
+                        .position(x:16,y:15)
                     Image(systemName: "circle.hexagongrid.fill") .renderingMode(.original)
-                        .font(.title2)
+                        .font(.title3)
                         .bold()
-                        .position(x:15,y:15)
+                        .position(x:55,y:15)
                         .rotationEffect(Angle(degrees: 180))
-                    Text("4")
+                    Text("+4")
                         .foregroundColor(.white)
                         .font(.title2)
                         .bold()
-                        .position(x:15,y:15)
+                        .position(x:16,y:15)
                         .rotationEffect(Angle(degrees: 180))
                 }
             } else {
@@ -253,5 +253,12 @@ struct Cardify: AnimatableModifier {
 extension View {
     func cardify(isFaceUp: Bool, card: UnoGame<String>.Card, isDiagonal: Bool) -> some View {
         modifier(Cardify(isFaceUp: isFaceUp, card: card, isDiagonal: isDiagonal))
+    }
+}
+
+struct Cardify_Previews: PreviewProvider {
+    static var previews: some View {
+        CardView(card: UnoGame<String>.Card(player: 1, isFaceUp: true, number: 14, color: .black, id: 306))
+            .padding(100)
     }
 }

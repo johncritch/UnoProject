@@ -75,7 +75,9 @@ struct ContentView: View {
                             .rotationEffect(Angle(degrees: card.tilt))
                             .transition(AnyTransition.offset(x: card.x, y: card.y))
                             .onTapGesture {
-                                if unoGame.playCard(card: card, player: unoGame.players[1]) {
+                                if card.number == 13 || card.number == 14 {
+                                    unoGame.chooseColor(card: card, player: unoGame.players[1])
+                                } else if unoGame.playCard(card: card, player: unoGame.players[1]) {
                                     unoGame.compAI()
                                 }
                             }
@@ -143,6 +145,26 @@ struct ContentView: View {
             if !unoGame.alreadyDealt{
                 unoGame.dealCards()
             }
+        }
+        .overlay(alignment: .bottom) {
+            if unoGame.chooseColorPopUp {
+                ColorPicker(chosenColor: self.$chosenColor)
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if unoGame.isWinner {
+                WinningView(won: self.$won, message: unoGame.winningMessage)
+            }
+        }
+        .onChange(of: chosenColor) { newColor in
+            unoGame.chooseColorPopUp.toggle()
+            if unoGame.playCard(card: unoGame.wildCard, player: unoGame.wildPlayer, desiredColor: chosenColor) {
+                unoGame.compAI()
+            }
+        }
+        .onChange(of: won) { newColor in
+            unoGame.newGame()
+            won = false
         }
     }
     private struct Card {

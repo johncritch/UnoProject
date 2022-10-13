@@ -14,13 +14,14 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     private(set) var players: Array<Player>
     private(set) var inPlayCards: Array<Card>
     var handSize: Int
-    var newGame: Bool = false
     var turn: Int
     var firstCard: Card
     var topCardNumber: Int
     var topCardColor: Color
     var displayMessage: String
     var colors = [Color.red, Color.blue, Color.yellow, Color.green]
+    var isWinner = false
+    var winningMessage = ""
     
     init() {
         cards = Array<Card>()
@@ -217,6 +218,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
                     }
                 }
                 displayMessage = message
+                players[chosenPlayerIndex].lastPlayedCard = playedCard
                 return playedCard
             }
         }
@@ -227,6 +229,14 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         if let chosenPlayerIndex = players.firstIndex(matching: player) {
             if let chosenCardIndex = players[chosenPlayerIndex].cards.firstIndex(matching: card) {
                 players[chosenPlayerIndex].cards.remove(at: chosenCardIndex)
+                if players[chosenPlayerIndex].cards.isEmpty {
+                    if player.id == 1 {
+                        winningMessage = "You Win!"
+                    } else {
+                        winningMessage = "Player \(player.id) Wins!"
+                    }
+                    isWinner = true
+                }
             }
         }
     }
@@ -237,15 +247,20 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         inPlayCards.append(discardCard)
     }
 
-    mutating func drawCard(player: Player, message: String = "") {
-        var drawnCard = cards.removeLast()
+    mutating func drawCard(card: Card, player: Player, message: String = "") {
+        var drawnCard = card
+        drawnCard.player = player.id
         if player.id == 1 {
             drawnCard.isFaceUp = true
         }
-        let chosenPlayerIndex = players.firstIndex(matching: player)
-        drawnCard.player = player.id
-        players[chosenPlayerIndex!].cards.append(drawnCard)
+        players[player.id].cards.append(drawnCard)
         displayMessage = message
+    }
+    
+    mutating func removeFromStack(card: Card) {
+        if let chosenCardIndex = cards.firstIndex(matching: card) {
+            cards.remove(at: chosenCardIndex)
+        }
     }
     
 //    mutating func deal(cardIndex: Int) {
@@ -292,6 +307,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         var cards = Array<Card>()
         var isOnSide: Bool
         var id: Int
+        var lastPlayedCard: Card = Card(number: 0, color: Color.blue, id: 300)
     }
     
     struct Card: Identifiable {

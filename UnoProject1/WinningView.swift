@@ -48,6 +48,6 @@ struct WinningView: View {
 //
 //struct WinningView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        WinningView(message: "Winner")
+//        WinningView(won: true, message: "Winner")
 //    }
 //}
