@@ -36,7 +36,7 @@ struct ContentView: View {
                         .foregroundColor(.red)
                         .overlay(Text("Turn").font(.title).foregroundColor(.white))
                         .onTapGesture {
-                            print(unoGame.canPlay)
+                            print(unoGame.playerTurn)
                         }
                 }
                 .coordinateSpace(name: "menu")
@@ -47,6 +47,7 @@ struct ContentView: View {
                     ForEach(unoGame.cards) { card in
                         CardView(card: card)
                             .rotationEffect(Angle(degrees: card.tilt))
+                            .transition(AnyTransition.offset(x: card.x, y: card.y))
                             .onTapGesture {
                                 unoGame.draw(player: unoGame.players[unoGame.playerTurn])
                             }
@@ -59,6 +60,10 @@ struct ContentView: View {
                     ForEach(unoGame.inPlayCards) { card in
                         CardView(card: card)
                             .rotationEffect(Angle(degrees: card.tilt))
+                            .onAppear {
+                                unoGame.geometryWidth = reader.size.width
+                                unoGame.geometryHeight = reader.size.height
+                            }
                     }
                 }
                 .coordinateSpace(name: "discard")
@@ -121,10 +126,7 @@ struct ContentView: View {
                 .position(x: 55, y: reader.size.height * 1/2)
                 
             }
-            .onAppear {
-                unoGame.geometryWidth = reader.size.width
-                unoGame.geometryHeight = reader.size.height
-            }
+            
 //            .onRotate { newOrientation in
 //                orientation = newOrientation
 //                if orientation.isPortrait {

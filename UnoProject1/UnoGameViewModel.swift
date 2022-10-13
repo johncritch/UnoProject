@@ -33,7 +33,7 @@ class UnoGameViewModel: ObservableObject {
     }
     
     var inPlayCards: Array<UnoGame<String>.Card> {
-        game.inPlayCards
+        game.inPlayCards.filter { $0.isDealt }
     }
     
     var player1Spacing: Double {
@@ -55,6 +55,8 @@ class UnoGameViewModel: ObservableObject {
     var geometryWidth: Double = 0
     
     var geometryHeight: Double = 0
+    
+    var lastPlayedCard: UnoGame<String>.Card = UnoGame.Card(number: 12, color: Color.blue, id: 201)
     
     var canPlay: Bool = true
     
@@ -83,31 +85,35 @@ class UnoGameViewModel: ObservableObject {
     
     var winnerMessage = ""
     
-    func draw(player: UnoGame<String>.Player, message: String = "") {
-        canPlay = false
+    var isNewGame: Bool = true
+    
+    func draw(player: UnoGame<String>.Player, message: String = "") -> Bool {
         if let drawnCard = cards.last {
-            withAnimation (
-                Animation.easeIn(duration: 0.3 * turnAnimation)
-            ) {
-                game.drawCard(player: player, message: message)
-                turnAnimation += 1
-                objectWillChange.send()
+            DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
+                withAnimation (
+                    Animation.linear(duration: 1.4).delay(Double(self.turnAnimation))
+                ) {
+                    self.game.drawCard(player: player, message: message)
+                }
             }
             print("Player \(playerTurn) Drew")
 
             if drawnCard.color == topCardColor || drawnCard.number == topCardNumber || drawnCard.color == Color.black {
                 print("Still \(playerTurn)'s Turn")
+                if playerTurn == 1 {
+                    turnAnimation = 0
+                }
             } else if playerTurn == 1 {
-                nextPlayer()
                 compAI()
             } else {
-                nextPlayer()
+                return false
             }
         }
+        return true
     }
     
     func playCard(card: UnoGame<String>.Card, player: UnoGame<String>.Player, desiredColor: Color = Color.red) -> Bool {
-        if player.id == playerTurn && (card.color == topCardColor || card.number == topCardNumber || card.color == Color.black) {
+        if player.id == playerTurn && card.id != lastPlayedCard.id && (card.color == topCardColor || card.number == topCardNumber || card.color == Color.black) {
             specialMessage = getSpecialMessage(card: card)
             
             let numInHand = getNumInHand(card: card, player: player)
@@ -115,47 +121,54 @@ class UnoGameViewModel: ObservableObject {
             let spaceFromDiscard = spaceFromDiscard(numInHand: numInHand, handCount: player.cards.count, spacing: spacing, isOnSide: player.isOnSide)
             
             if player.id == 1 {
-                findPosition(card: card, player: player, x: spaceFromDiscard, y: (geometryHeight/2 - 120) * -1)
+                findPosition(card: card, player: player, x: spaceFromDiscard, y: (geometryHeight/2 - 55) * -1)
             } else if player.id == 2 {
                 findPosition(card: card, player: player, x: (geometryWidth/2 - 95) * -1, y: spaceFromDiscard)
             } else if player.id == 3 {
-                findPosition(card: card, player: player, x: spaceFromDiscard, y: geometryHeight/2 - 120)
+                findPosition(card: card, player: player, x: spaceFromDiscard, y: geometryHeight/2 - 55)
             } else {
                 findPosition(card: card, player: player, x: geometryWidth/2 - 15, y: spaceFromDiscard)
             }
             
             var playedCard = cards.first!
             withAnimation (
-                Animation.linear(duration: 1).delay(0.3 + turnAnimation)
+                Animation.linear(duration: 1).delay(0.3 + self.turnAnimation)
             ) {
-                playedCard = game.playCard(card: card, player: player, desiredColor: desiredColor, message: specialMessage)
+                playedCard = self.game.playCard(card: card, player: player, desiredColor: desiredColor, message: self.specialMessage)
+            }
+            lastPlayedCard = card
+            DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
+                withAnimation (
+                    Animation.easeOut(duration: 1.4).delay(self.turnAnimation)
+                ) {
+                    self.game.remove(card: card, player: player)
+                }
             }
             withAnimation (
-                Animation.easeOut(duration: 1.4).delay(turnAnimation)
+                Animation.linear(duration: 0.1).delay(1.3 + self.turnAnimation)
             ) {
-                game.remove(card: card, player: player)
+                self.game.discard(card: playedCard)
+                self.isWin()
             }
-            withAnimation (
-                Animation.linear(duration: 0.1).delay(1.3 + turnAnimation)
-            ) {
-                game.discard(card: playedCard)
-                isWin()
-            }
-            
-            turnAnimation += 1
             
             if card.number > 9 {
                 specialCard(card: card, player: player)
             }
-//            if player.id == 1 {
-//                nextPlayer()
-//            }
-            nextPlayer()
             
             return true
         } else {
             return false
         }
+    }
+    
+    private func whosNext() -> Int {
+        var turn = playerTurn + isReverse
+        if turn > 4 {
+            turn = 1
+        } else if turn < 1 {
+            turn = 4
+        }
+        return turn
     }
     
     private func nextPlayer() {
@@ -186,6 +199,7 @@ class UnoGameViewModel: ObservableObject {
     }
     
     func specialCard(card: UnoGame<String>.Card, player: UnoGame<String>.Player) {
+        let nextToPlay = whosNext()
         if card.number == 10 {
             print("Skipped player \(playerTurn)")
             nextPlayer()
@@ -194,73 +208,62 @@ class UnoGameViewModel: ObservableObject {
             print("Reversed!")
         } else if card.number == 12 {
             specialMessage = "Draw 2!"
-            nextPlayer()
+            
             for _ in 0...1 {
-                withAnimation (
-                    Animation.easeIn(duration: 0.3).delay(Double(turnAnimation))
-                ) {
-                    game.drawCard(player: players[playerTurn + 1], message: specialMessage)
-                    turnAnimation += 1
+                turnAnimation += 1.5
+                DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
+                    withAnimation (
+                        Animation.linear(duration: 1.4).delay(Double(self.turnAnimation))
+                    ) {
+                        self.game.drawCard(player: self.players[nextToPlay], message: self.specialMessage)
+                    }
                 }
             }
+            nextPlayer()
+            print(playerTurn)
             print("Draw 2!")
+            
         } else if card.number == 14 {
             specialMessage = "Wild Card! Draw 4!"
-            playerTurn += isReverse
-            if playerTurn > 4 {
-                playerTurn = 1
-            } else if playerTurn < 1 {
-                playerTurn = 4
-            }
             for _ in 0...3 {
-                withAnimation (
-                    Animation.easeIn(duration: 0.3).delay(Double(turnAnimation))
-                ) {
-                    game.drawCard(player: players[playerTurn - 1], message: specialMessage)
-                    turnAnimation += 1
+                turnAnimation += 1.5
+                DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
+                    withAnimation (
+                        Animation.linear(duration: 1.4).delay(Double(self.turnAnimation))
+                    ) {
+                        self.game.drawCard(player: self.players[nextToPlay], message: self.specialMessage)
+                    }
                 }
             }
+            nextPlayer()
             print("Draw 4!")
         }
     }
     
-    func newGame() {
-        playerTurn = 1
-        turnAnimation = 0
-        playable = false
-        isReverse = 1
-        game = UnoGameViewModel.createGame()
-        dealCards()
-        specialMessage = ""
-        winnerPopUp = false
-    }
-    
-    func dealCards() {
-        for index in 0...(game.handSize * 4) {
-            withAnimation (
-                Animation.easeInOut(duration: 0.3).delay(Double(0) * 0.25)
-            ) {
-                game.deal(cardIndex: index)
-                objectWillChange.send()
-            }
-        }
-        alreadyDealt = true
-    }
-    
     func compAI() {
+        nextPlayer()
+        turnAnimation += 1.5
         while playerTurn != 1 {
             whatTurn()
             var playable = false
             for card in players[playerTurn].cards {
                 if playCard(card: card, player: players[playerTurn]) {
                     playable.toggle()
+                    nextPlayer()
                     break
                 }
             }
             
             if !playable {
-                draw(player: players[playerTurn])
+                if !draw(player: players[playerTurn]) {
+                    nextPlayer()
+                }
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
+                self.isWin()
+            }
+            turnAnimation += 1.5
+            
         }
         print("Back to you---------------------")
         turnAnimation = 0
@@ -334,5 +337,28 @@ class UnoGameViewModel: ObservableObject {
         } else {
             return -30
         }
+    }
+    
+    func newGame() {
+        game = UnoGameViewModel.createGame()
+        playerTurn = 1
+        turnAnimation = 0
+        playable = false
+        isReverse = 1
+        dealCards()
+        specialMessage = ""
+        winnerPopUp = false
+        geometryWidth = 0
+        geometryHeight = 0
+    }
+    
+    func dealCards() {
+        withAnimation (
+            Animation.easeInOut(duration: 0.5)
+        ) {
+            game.deal()
+            objectWillChange.send()
+        }
+        alreadyDealt = true
     }
 }
