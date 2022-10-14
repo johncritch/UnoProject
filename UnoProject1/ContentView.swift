@@ -13,7 +13,7 @@ struct ContentView: View {
     @State var chosenColor = Color.black
     @State var won = false
     @State var playedCard: Bool = false
-    @State var heightAdjust: Double = 120
+    @State var heightAdjust: Double = 140
     @State var widthAdjust: Double = 0
     @State var orientation = UIDeviceOrientation.unknown
     @State var player1Spacing: Double = 0.0
@@ -25,32 +25,33 @@ struct ContentView: View {
         GeometryReader { reader in
             ZStack {
                 VStack {
-                    Text(unoGame.displayMessage)
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .font(.system(size: 50))
+                        .rotation3DEffect(Angle(degrees: (unoGame.isReverse < 0) ? 0 : 180), axis: (x: 0, y: 1, z: 0))
+                    Spacer()
                     RoundedRectangle(cornerRadius: 10)
                         .foregroundColor(.red)
-                        .overlay(Text("New Game").font(.title).foregroundColor(.white))
+                        .overlay(Text("Deal Again").font(.title).foregroundColor(.white))
                         .onTapGesture {
                             unoGame.newGame()
-                            unoGame.dealCards()
+//                            unoGame.dealCards()
                         }
-                    RoundedRectangle(cornerRadius: 10)
-                        .foregroundColor(.red)
-                        .overlay(Text("Turn").font(.title).foregroundColor(.white))
-                        .onTapGesture {
-                            print(unoGame.playerTurn)
-                        }
+                        .frame(height: 50)
                 }
                 .coordinateSpace(name: "menu")
-                .frame(width: 150, height: 80)
+                .frame(width: 150, height: 140)
                 .position(x: (reader.size.width / 2) - widthAdjust, y: (reader.size.height / 2) - heightAdjust)
                 
                 VStack {
                     Text("High Score: \(String(highScore))")
+                        .bold()
+                    Spacer()
                     Text(unoGame.displayMessage)
+                        .bold()
                 }
                 .coordinateSpace(name: "menu")
                 .frame(width: 150, height: 80)
-                .position(x: (reader.size.width / 2) - widthAdjust, y: (reader.size.height / 2) + 100)
+                .position(x: (reader.size.width / 2) - widthAdjust, y: (reader.size.height / 2) + 110)
             
                 
                 ZStack {
@@ -59,7 +60,7 @@ struct ContentView: View {
                             .rotationEffect(Angle(degrees: card.tilt))
                             .transition(AnyTransition.offset(x: card.x, y: card.y))
                             .onTapGesture {
-                                unoGame.draw(player: unoGame.players[unoGame.playerTurn])
+                                _ = unoGame.draw(player: unoGame.players[unoGame.playerTurn])
                             }
                     }
                 }
@@ -73,6 +74,10 @@ struct ContentView: View {
                             .onAppear {
                                 unoGame.geometryWidth = reader.size.width
                                 unoGame.geometryHeight = reader.size.height
+                                if unoGame.inPlayCards.count == 1 {
+                                    unoGame.geometryHeight -= 135
+                                }
+                                won = false
                             }
                     }
                 }
@@ -85,16 +90,19 @@ struct ContentView: View {
                             .rotationEffect(Angle(degrees: card.tilt))
                             .transition(AnyTransition.offset(x: card.x, y: card.y))
                             .onTapGesture {
-                                if card.number == 13 || card.number == 14 {
-                                    unoGame.chooseColor(card: card, player: unoGame.players[1])
-                                } else if unoGame.playCard(card: card, player: unoGame.players[1]) {
-                                    unoGame.compAI()
+                                if unoGame.canPlay {
+                                    if card.number == 13 || card.number == 14 {
+                                        unoGame.chooseColor(card: card, player: unoGame.players[1])
+                                    } else if unoGame.playCard(card: card, player: unoGame.players[1]) {
+                                        unoGame.compAI()
+                                    }
                                 }
                             }
                     }
                 }
                 .coordinateSpace(name: "player1")
                 .position(x: reader.size.width * 1/2, y: reader.size.height - 55)
+                .shadow(color: .blue, radius: unoGame.canPlay ? 8 : 0)
                 
                 VStack(spacing: unoGame.player2Spacing - 30) {
                     ForEach(unoGame.players[2].cards) { card in
@@ -139,6 +147,7 @@ struct ContentView: View {
                 
             }
             
+            // IF I WANT TO IMPLEMENT ROTATION LATER
 //            .onRotate { newOrientation in
 //                orientation = newOrientation
 //                if orientation.isPortrait {
@@ -164,11 +173,6 @@ struct ContentView: View {
         .overlay(alignment: .bottom) {
             if unoGame.isWinner {
                 WinningView(won: self.$won, message: unoGame.winningMessage)
-                    .onAppear {
-                        if unoGame.highScore > highScore {
-                            highScore = unoGame.highScore
-                        }
-                    }
             }
         }
         .onChange(of: chosenColor) { newColor in
@@ -178,8 +182,11 @@ struct ContentView: View {
             }
         }
         .onChange(of: won) { newColor in
+            print(unoGame.highScore)
+            if unoGame.highScore > highScore {
+                highScore = unoGame.highScore
+            }
             unoGame.newGame()
-            won = false
         }
     }
     private struct Card {

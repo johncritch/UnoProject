@@ -6,15 +6,13 @@
 //
 
 import Foundation
-import UIKit
-import SwiftUI
+import SwiftUI // For Colors Only
 
 struct UnoGame<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
     private(set) var players: Array<Player>
     private(set) var inPlayCards: Array<Card>
     var handSize: Int
-    var turn: Int
     var firstCard: Card
     var topCardNumber: Int
     var topCardColor: Color
@@ -23,6 +21,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     var isWinner = false
     var winningMessage = ""
     var highScore = 0
+    var canPlay: Bool = true
     
     init() {
         cards = Array<Card>()
@@ -38,7 +37,6 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         inPlayCards = Array<Card>()
         
         handSize = 7;
-        turn = 1;
         
         cards.append(Card(number: 0, color: Color.blue, id: 1, x: 0, y: 0))
         cards.append(Card(number: 1, color: Color.blue, id: 2, x: 0, y: 0))
@@ -243,6 +241,14 @@ struct UnoGame<CardContent> where CardContent: Equatable {
         }
     }
     
+    mutating func playerOneCanPlay() {
+        canPlay = true
+    }
+    
+    mutating func playerOneCannotPlay() {
+        canPlay = false
+    }
+    
     mutating func discard(card: Card) {
         var discardCard = card
         discardCard.isDealt = true
@@ -264,21 +270,6 @@ struct UnoGame<CardContent> where CardContent: Equatable {
             cards.remove(at: chosenCardIndex)
         }
     }
-    
-//    mutating func deal(cardIndex: Int) {
-//        if cardIndex >= 0 && cardIndex < handSize {
-//            players[1].cards[cardIndex].isDealt = true
-//        }
-//        if cardIndex >= handSize && cardIndex < handSize * 2 {
-//            players[2].cards[cardIndex - handSize].isDealt = true
-//        }
-//        if cardIndex >= handSize * 2 && cardIndex < handSize * 3 {
-//            players[3].cards[cardIndex - (handSize * 2)].isDealt = true
-//        }
-//        if cardIndex >= handSize * 3 && cardIndex < handSize * 4 {
-//            players[4].cards[cardIndex - (handSize * 3)].isDealt = true
-//        }
-//    }
     
     mutating func deal() {
         inPlayCards[0].isDealt = true

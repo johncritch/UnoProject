@@ -16,26 +16,7 @@ class UnoGameViewModel: ObservableObject {
         UnoGame<String>()
     }
     
-    var isWinner: Bool {
-        game.isWinner
-    }
-    
-    var highScore: Int {
-        game.highScore
-    }
-    
-    var winningMessage: String {
-        game.winningMessage
-    }
-    
-    var topCardNumber: Int {
-        inPlayCards.last!.number
-    }
-    
-    var topCardColor: Color {
-        inPlayCards.last!.color
-    }
-    
+    //Deck of Cards
     var cards: Array<UnoGame<String>.Card> {
         game.cards
     }
@@ -48,6 +29,35 @@ class UnoGameViewModel: ObservableObject {
         game.inPlayCards.filter { $0.isDealt }
     }
     
+    var canPlay: Bool {
+        game.canPlay
+    }
+    
+    var isWinner: Bool {
+        game.isWinner
+    }
+    
+    var winningMessage: String {
+        game.winningMessage
+    }
+    
+    var highScore: Int {
+        game.highScore
+    }
+    
+    var displayMessage: String {
+        game.displayMessage
+    }
+    
+    var topCardNumber: Int {
+        inPlayCards.last!.number
+    }
+    
+    var topCardColor: Color {
+        inPlayCards.last!.color
+    }
+    
+    //Spacing for animations when cards change
     var player1Spacing: Double {
         getSpacing(numCards: Double(game.players[1].cards.count))
     }
@@ -68,32 +78,37 @@ class UnoGameViewModel: ObservableObject {
     
     var geometryHeight: Double = 0
     
+    // Stops play when theres a winner
+    var isWin: Bool = false
+    
     var alreadyDealt: Bool = false
     
+    // Shop Color Chooser
     var chooseColorPopUp: Bool = false
     
+    // Show Winner Screen
     var winnerPopUp: Bool = false
     
     var wildCard: UnoGame<String>.Card = UnoGame.Card(number: 12, color: Color.blue, id: 200)
     
     var wildPlayer: UnoGame<String>.Player = UnoGame.Player(isOnSide: false, id: 10)
 
+    // Whos turn
     var playerTurn = 1
     
+    // Animation Multiplier
     var turnAnimation: Double = 0
-    
-    var playable = false
     
     var isReverse = 1
     
-    var displayMessage: String {
-        game.displayMessage
-    }
     var specialMessage = ""
     
     var winnerMessage = ""
     
     var isNewGame: Bool = true
+    
+    
+    // MARK: Model Functions
     
     func draw(player: UnoGame<String>.Player, message: String = "") -> Bool {
         if let drawnCard = cards.last {
@@ -105,7 +120,7 @@ class UnoGameViewModel: ObservableObject {
                     self.game.drawCard(card: drawnCard, player: player, message: message)
                 }
             }
-            print("Player \(player.id) drew a \(drawnCard.color) \(drawnCard.id)")
+            print("Player \(player.id) drew a \(drawnCard.color) \(drawnCard.number)")
             if player.id == 1 {
                 if (drawnCard.color == topCardColor || drawnCard.number == topCardNumber || drawnCard.color == Color.black) && drawnCard.id != player.lastPlayedCard.id {
                     print("Still \(playerTurn)'s Turn")
@@ -113,6 +128,7 @@ class UnoGameViewModel: ObservableObject {
                 }
             }
             if playerTurn == 1 {
+                game.playerOneCannotPlay()
                 turnAnimation = 0
                 compAI()
             }
@@ -123,6 +139,12 @@ class UnoGameViewModel: ObservableObject {
     
     func playCard(card: UnoGame<String>.Card, player: UnoGame<String>.Player, desiredColor: Color = Color.red) -> Bool {
         if player.id == playerTurn && card.id != player.lastPlayedCard.id && (card.color == topCardColor || card.number == topCardNumber || card.color == Color.black) {
+            if player.cards.count == 1 {
+                isWin = true
+            }
+            if player.id == 1 {
+                game.playerOneCannotPlay()
+            }
             specialMessage = getSpecialMessage(card: card)
             
             let numInHand = getNumInHand(card: card, player: player)
@@ -140,22 +162,22 @@ class UnoGameViewModel: ObservableObject {
             }
             var playedCard = cards.first!
             withAnimation (
-                Animation.linear(duration: 1).delay(0.3 + self.turnAnimation)
+                Animation.linear(duration: 1).delay(0.3 + turnAnimation)
             ) {
-                playedCard = self.game.playCard(card: card, player: player, desiredColor: desiredColor, message: self.specialMessage)
+                playedCard = game.playCard(card: card, player: player, desiredColor: desiredColor, message: specialMessage)
                 print("Player \(player.id) played a \(card.color) \(card.number).")
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) { [self] in
                 withAnimation (
-                    Animation.easeOut(duration: 1.5).delay(self.turnAnimation)
+                    Animation.easeOut(duration: 1.5).delay(turnAnimation)
                 ) {
-                    self.game.remove(card: card, player: player)
+                    game.remove(card: card, player: player)
                 }
             }
             withAnimation (
-                Animation.linear(duration: 0.1).delay(1.4 + self.turnAnimation)
+                Animation.linear(duration: 0.1).delay(1.4 + turnAnimation)
             ) {
-                self.game.discard(card: playedCard)
+                game.discard(card: playedCard)
             }
             
             if card.number > 9 {
@@ -168,8 +190,20 @@ class UnoGameViewModel: ObservableObject {
         }
     }
     
+    private func findPosition(card: UnoGame<String>.Card, player: UnoGame<String>.Player, x: CGFloat, y: CGFloat) {
+        game.findPosition(card: card, player: player, x: x, y: y)
+    }
+    
+    private func getNumInHand(card: UnoGame<String>.Card, player: UnoGame<String>.Player) -> Int {
+        return game.getNumInHand(card: card, player: player)
+    }
+    
+    //MARK: Helper Functions
+    
     private func whosNext() -> Int {
-        var turn = playerTurn + isReverse
+        var turn = playerTurn
+ 
+        turn = turn + isReverse
         if turn > 4 {
             turn = 1
         } else if turn < 1 {
@@ -220,11 +254,11 @@ class UnoGameViewModel: ObservableObject {
                 turnAnimation += 0.5
                 let drawnCard = game.cards.last
                 game.removeFromStack(card: drawnCard!)
-                DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) { [self] in
                     withAnimation (
                         Animation.linear(duration: 1.4).delay(Double(self.turnAnimation))
                     ) {
-                        self.game.drawCard(card: drawnCard!, player: self.players[nextToPlay], message: self.specialMessage)
+                        game.drawCard(card: drawnCard!, player: players[nextToPlay], message: specialMessage)
                     }
                 }
             }
@@ -238,12 +272,12 @@ class UnoGameViewModel: ObservableObject {
                 turnAnimation += 0.5
                 let drawnCard = game.cards.last
                 game.removeFromStack(card: drawnCard!)
-                DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) { [self] in
                     
                     withAnimation (
-                        Animation.linear(duration: 1.4).delay(Double(self.turnAnimation))
+                        Animation.linear(duration: 1.4).delay(Double(turnAnimation))
                     ) {
-                        self.game.drawCard(card: drawnCard!, player: self.players[nextToPlay], message: self.specialMessage)
+                        game.drawCard(card: drawnCard!, player: players[nextToPlay], message: specialMessage)
                     }
                 }
             }
@@ -256,24 +290,28 @@ class UnoGameViewModel: ObservableObject {
         nextPlayer()
         turnAnimation += 1.5
         while playerTurn != 1 {
-            var playable = false
-            for card in players[playerTurn].cards {
-                if playCard(card: card, player: players[playerTurn]) {
-                    playable.toggle()
-                    nextPlayer()
-                    break
+            if !isWin {
+                var playable = false
+                for card in players[playerTurn].cards {
+                    if playCard(card: card, player: players[playerTurn]) {
+                        playable.toggle()
+                        nextPlayer()
+                        break
+                    }
                 }
-            }
-            
-            if !playable {
-                if !draw(player: players[playerTurn]) {
-                    nextPlayer()
+                
+                if !playable {
+                    if !draw(player: players[playerTurn]) {
+                        nextPlayer()
+                    }
                 }
+                turnAnimation += 1.5
+            } else {
+                playerTurn = 1
             }
-            isWin()
-            turnAnimation += 1.5
-            
-            
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) { [self] in
+            game.playerOneCanPlay()
         }
         print("Back to you---------------------")
         turnAnimation = 0
@@ -286,14 +324,6 @@ class UnoGameViewModel: ObservableObject {
             wildCard = card
             wildPlayer = player
         }
-    }
-    
-    func findPosition(card: UnoGame<String>.Card, player: UnoGame<String>.Player, x: CGFloat, y: CGFloat) {
-        game.findPosition(card: card, player: player, x: x, y: y)
-    }
-    
-    func getNumInHand(card: UnoGame<String>.Card, player: UnoGame<String>.Player) -> Int {
-        return game.getNumInHand(card: card, player: player)
     }
     
     func spaceFromDiscard(numInHand: Int, handCount: Int, spacing: Double, isOnSide: Bool) -> CGFloat {
@@ -315,35 +345,6 @@ class UnoGameViewModel: ObservableObject {
         return toDiscard
     }
     
-    func whatTurn() {
-        print("Player \(playerTurn) Went")
-    }
-    
-    func isWin(){
-        var winner = ""
-        if players[1].cards.isEmpty || players[2].cards.isEmpty || players[3].cards.isEmpty || players[4].cards.isEmpty {
-            if players[0].cards.isEmpty {
-                winner = "You Win!"
-            } else if players[1].cards.isEmpty {
-                winner = "Player 2 Wins!"
-            } else if players[2].cards.isEmpty {
-                winner = "Player 3 Wins!"
-            } else {
-                winner = "Player 4 Wins!"
-            }
-            winnerMessage = winner
-            DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
-                withAnimation(.easeInOut.delay(0.25)) {
-                    self.winnerPopUp.toggle()
-                    self.objectWillChange.send()
-                }
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + turnAnimation) {
-                self.newGame()
-            }
-        }
-    }
-    
     private func getSpacing(numCards: Double) -> Double {
         let spacing = -1 * (((70 * numCards) - 280) / numCards)
         if spacing < -30 {
@@ -356,11 +357,11 @@ class UnoGameViewModel: ObservableObject {
     func newGame() {
         game.isWinner = false
         game = UnoGameViewModel.createGame()
+        isWin = false
+        dealCards()
         playerTurn = 1
         turnAnimation = 0
-        playable = false
         isReverse = 1
-        dealCards()
         specialMessage = ""
         winnerPopUp = false
         geometryWidth = 0

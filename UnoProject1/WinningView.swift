@@ -32,7 +32,7 @@ struct WinningView: View {
                                 Text("New Game")
                             }
                             .onTapGesture {
-                                won = true
+                                won.toggle()
                             }
                     }.padding(.bottom, 30)
                     
