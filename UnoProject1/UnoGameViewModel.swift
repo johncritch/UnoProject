@@ -20,6 +20,10 @@ class UnoGameViewModel: ObservableObject {
         game.isWinner
     }
     
+    var highScore: Int {
+        game.highScore
+    }
+    
     var winningMessage: String {
         game.winningMessage
     }

@@ -8,27 +8,60 @@
 import SwiftUI
 
 struct StartView: View {
-    @State private var name = ""
+    @AppStorage("highScore") var highScore: Int = 0
     
     var body: some View {
-        NavigationStack {
-            Form {
-                Section(header: Text("Game")) {
-                    NavigationLink("Uno") {
-                        ContentView(unoGame: UnoGameViewModel())
-                    }
-                    NavigationLink("Record") {
-                        Capsule().fill(.purple)
-//                            .navigationTitle("Uno!")
-                    }
-//                    .navigationTitle("Uno!")
+        VStack {
+            NavigationStack {
+                RoundedRectangle(cornerRadius: 0)
+                    .fill(
+                        LinearGradient(gradient: Gradient(colors: [.red, .red, .red, .white]), startPoint: .top, endPoint: .bottom)
+                    )
+                    .frame(height: 700)
+                    .overlay(
+                        Ellipse().fill(.white).frame( width: 420, height: 320)
+                            .rotationEffect(Angle(degrees: -40))
+                    )
+                    .overlay(
+                        Ellipse().fill(.black).frame( width: 400, height: 300)
+                            .rotationEffect(Angle(degrees: -40))
+                    )
+                    .overlay(
+                        Text("UNO")
+                            .foregroundColor(.white)
+                            .font(.system(size: 161))
+                    )
+                    .ignoresSafeArea()
+                NavigationLink("Play Uno!") {
+                    ContentView(unoGame: UnoGameViewModel())
                 }
-                Section(header: Text("Settings")) {
-                    TextField("Name", text: $name)
+                .frame(width: 300, height: 50)
+                .background(.red)
+                .foregroundColor(.white)
+                .cornerRadius(20)
+                .font(.system(size: 30))
+                .bold()
+                
+                NavigationLink("Records") {
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(.red)
+                        .padding()
+                        .frame(width: 300, height: 200)
+                        .overlay(
+                            Text(String(highScore))
+                                .font(.system(size: 50))
+                        )
                 }
+                .frame(width: 300, height: 50)
+                .background(.red)
+                .foregroundColor(.white)
+                .cornerRadius(20)
+                .font(.system(size: 30))
+                .bold()
+                
+                Spacer(minLength: 20)
             }
         }
-        
     }
 }
 

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var unoGame: UnoGameViewModel
+    @AppStorage("highScore") var highScore: Int = 0
     @State var chosenColor = Color.black
     @State var won = false
     @State var playedCard: Bool = false
@@ -42,6 +43,15 @@ struct ContentView: View {
                 .coordinateSpace(name: "menu")
                 .frame(width: 150, height: 80)
                 .position(x: (reader.size.width / 2) - widthAdjust, y: (reader.size.height / 2) - heightAdjust)
+                
+                VStack {
+                    Text("High Score: \(String(highScore))")
+                    Text(unoGame.displayMessage)
+                }
+                .coordinateSpace(name: "menu")
+                .frame(width: 150, height: 80)
+                .position(x: (reader.size.width / 2) - widthAdjust, y: (reader.size.height / 2) + 100)
+            
                 
                 ZStack {
                     ForEach(unoGame.cards) { card in
@@ -154,6 +164,11 @@ struct ContentView: View {
         .overlay(alignment: .bottom) {
             if unoGame.isWinner {
                 WinningView(won: self.$won, message: unoGame.winningMessage)
+                    .onAppear {
+                        if unoGame.highScore > highScore {
+                            highScore = unoGame.highScore
+                        }
+                    }
             }
         }
         .onChange(of: chosenColor) { newColor in

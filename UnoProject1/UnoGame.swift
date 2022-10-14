@@ -22,6 +22,7 @@ struct UnoGame<CardContent> where CardContent: Equatable {
     var colors = [Color.red, Color.blue, Color.yellow, Color.green]
     var isWinner = false
     var winningMessage = ""
+    var highScore = 0
     
     init() {
         cards = Array<Card>()
@@ -230,12 +231,13 @@ struct UnoGame<CardContent> where CardContent: Equatable {
             if let chosenCardIndex = players[chosenPlayerIndex].cards.firstIndex(matching: card) {
                 players[chosenPlayerIndex].cards.remove(at: chosenCardIndex)
                 if players[chosenPlayerIndex].cards.isEmpty {
+                    isWinner = true
                     if player.id == 1 {
-                        winningMessage = "You Win!"
+                        let score = calcHighScore()
+                        winningMessage = "You Win! You Scored \(score) Points!"
                     } else {
                         winningMessage = "Player \(player.id) Wins!"
                     }
-                    isWinner = true
                 }
             }
         }
@@ -301,6 +303,21 @@ struct UnoGame<CardContent> where CardContent: Equatable {
             }
         }
         return numInHand
+    }
+    
+    mutating func calcHighScore() -> Int {
+        for player in players {
+            for card in player.cards {
+                if player.id != 1 {
+                    if card.number > 9 {
+                        highScore += 3
+                    } else {
+                        highScore += 1
+                    }
+                }
+            }
+        }
+        return highScore
     }
     
     struct Player: Identifiable {
