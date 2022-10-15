@@ -286,6 +286,7 @@ class UnoGameViewModel: ObservableObject {
         }
     }
     
+    // Computer Generated AI
     func compAI() {
         nextPlayer()
         turnAnimation += 1.5
@@ -326,6 +327,7 @@ class UnoGameViewModel: ObservableObject {
         }
     }
     
+    // Calculates the x and y positions of each card to the discard pile
     func spaceFromDiscard(numInHand: Int, handCount: Int, spacing: Double, isOnSide: Bool) -> CGFloat {
         var midToDiscard: Double = 0
         var sideModifier: Double = 0
